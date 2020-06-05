@@ -84,8 +84,6 @@ export const constantRoutes = [
     ]
   }
 
- 
-
 ]
 
 /**
@@ -181,6 +179,15 @@ export const asyncRoutes = [
           title: '规格参数',
           roles: ['admin']
         }
+      },
+      {
+        path: 'productQuantity',
+        component: () => import('@/views/components/product/productQuantity/productQuantity'),
+        name: 'productQuantity',
+        meta: {
+          title: '商品库存',
+          roles: ['admin']
+        }
       }
     ]
   },
@@ -251,7 +258,7 @@ export const asyncRoutes = [
         component: () => import('@/views/components/customer/customerList/customer'),
         name: 'customerList',
         meta: {
-          title: '客户列表',
+          title: '订单列表',
           roles: ['admin'] // or you can only set roles in sub nav
         }
       },
@@ -308,22 +315,11 @@ export const asyncRoutes = [
     ]
   },
 
-
-
   /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter,
   // chartsRouter,
   // nestedRouter,
   // tableRouter,
-
-  
-
- 
-
-
-
-
-  
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
