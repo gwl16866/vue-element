@@ -1,6 +1,6 @@
 <template>
   <div><br>
-    <el-form ref="form" :model="form" label-width="“150px”" :inline="true">
+    <el-form label-width="“150px”" :inline="true">
       <el-form-item label="输入搜索">
         <el-col :span="30">
           <el-input v-model="productOrNumber" placeholder="商品名称/商品货号" />
@@ -9,7 +9,7 @@
       <el-form-item label="操作类型">
         <el-col :span="30">
           <el-select v-model="status" placeholder="全部">
-            <el-option label="退货时"" value="1" />
+            <el-option label="退货时" value="1" />
             <el-option label="添加商品" value="2" />
           </el-select>
         </el-col>
@@ -20,33 +20,33 @@
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="selectReturnMoney()">搜索</el-button>
+        <el-button type="primary" @click="selectQuantity()">搜索</el-button>
       </el-form-item>
     </el-form>
 
     <el-table :data="quantity" border style="width: 100%">
-      <el-table-column prop="productId" label="编号" width="200" />
-      <el-table-column prop="image" label="商品图片" width="200">
+      <el-table-column prop="productId" label="编号" width="165" />
+      <el-table-column label="商品图片" width="165">
         <template slot-scope="scope">
           <el-image
             style="width: 50px; height: 50px"
-            :src="require('@/images/'+scope.row.image)"
-            :preview-src-list="[require('@/images/'+scope.row.image)]"
+            :src="require('@/dir/imgs/'+scope.row.image)"
+            :preview-src-list="[require('@/dir/imgs/'+scope.row.image)]"
           />
         </template>
       </el-table-column>
-      <el-table-column prop="productName" label="商品名称" width="200" />
-      <el-table-column prop="productNumber" label="货号/属性" width="200" />
-      <el-table-column prop="orderNumber" label="订单号" width="200" />
-      <el-table-column prop="count" label="库存" width="200" />
-      <el-table-column prop="controlClass" label="库存类型" width="200" />
-      <el-table-column prop="status" label="申请状态" width="200">
+      <el-table-column prop="productName" label="商品名称" width="165" />
+      <el-table-column prop="productNumber" label="货号/属性" width="165" />
+      <el-table-column prop="orderNumber" label="订单号" width="165" />
+      <el-table-column prop="count" label="库存" width="165" />
+      <el-table-column prop="controlClass" label="库存类型" width="165" />
+      <el-table-column prop="status" label="申请状态" width="165">
         <template slot-scope="scope">
           <p v-if="scope.row.status=='1'">退货时</p>
-          <p v-else="scope.row.status=='2'">添加商品</p>
+          <p v-else>添加商品</p>
         </template>
       </el-table-column>
-      <el-table-column prop="quantityTime" label="操作信息" width="200" />
+      <el-table-column prop="quantityTime" label="操作信息" width="165" />
     </el-table>
   </div>
 </template>

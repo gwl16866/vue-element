@@ -1,6 +1,6 @@
 <template>
   <div><br>
-    <el-form ref="form" :model="form" label-width="“150px”" :inline="true">
+    <el-form label-width="“150px”" :inline="true">
       <el-form-item label="输入搜索">
         <el-col :span="30">
           <el-input v-model="serverNumber" placeholder="服务单号" />
@@ -30,10 +30,10 @@
       <el-table-column prop="applyStatus" label="申请状态" width="180">
         <template slot-scope="scope">
           <p v-if="scope.row.applyStatus=='1'">待处理</p>
-          <p v-else="scope.row.applyStatus=='2'">已处理</p>
+          <p v-else>已处理</p>
         </template>
       </el-table-column>
-      <el-table-column prop="applyTime" label="处理时间" width="180" />
+      <el-table-column prop="dispose" label="处理时间" width="180" />
       <el-table-column fixed="right" label="操作" width="180">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="del(scope.row)">详情</el-button>
@@ -47,9 +47,7 @@
 export default {
   data() {
     return {
-      returnThingsList: [
-        { serverNumber: '', applyTime: '', account: '', sumMoney: '', name: '', applyStatus: '', applyTime: '' }
-      ],
+      returnThingsList: [],
       serverNumber: '',
       nameOrPhone: '',
       time: ''

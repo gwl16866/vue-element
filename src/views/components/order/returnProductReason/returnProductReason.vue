@@ -1,4 +1,5 @@
 <template>
+
   <div><br>
     <el-table :data="returnReasonList" border style="width:100%">
       <el-table-column prop="reason" label="原因类型" width="370" />
@@ -17,7 +18,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="380">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="del(scope.row)">编辑</el-button>
+          <el-button type="text" size="small" @click="update(scope.row)">编辑</el-button>
           <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -46,7 +47,6 @@ export default {
         })
     },
     changeStatus: function(data) {
-      var qwe = this
       this.$axios.get('http://localhost:8081/re/returnmoney/OpenOrNotStatus', {
         params: {
           id: data.id,
@@ -55,6 +55,14 @@ export default {
       })
         .then(function(res = 1) {
           console.log(res)
+        }).catch(function(err) {
+          console.log(err)
+        })
+    },
+    del: function(data) {
+      this.$axios.get('http://localhost:8081/re/returnmoney/deleteReason?id=' + data.id)
+        .then(function(res) {
+          this.selectReturnReason()
         }).catch(function(err) {
           console.log(err)
         })

@@ -1,6 +1,6 @@
 <template>
   <div><br>
-    <el-form ref="form" :model="form" label-width="“150px”" :inline="true">
+    <el-form label-width="“150px”" :inline="true">
       <el-form-item label="输入搜索">
         <el-col :span="30">
           <el-input v-model="orderOrProduct" placeholder="订单编号/商品货号" />
