@@ -251,7 +251,7 @@ export const asyncRoutes = [
         component: () => import('@/views/components/customer/customerList/customer'),
         name: 'customerList',
         meta: {
-          title: '订单列表',
+          title: '客户列表',
           roles: ['admin'] // or you can only set roles in sub nav
         }
       },
