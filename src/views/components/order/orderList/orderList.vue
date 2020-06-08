@@ -27,15 +27,66 @@
       <el-table-column prop="account" label="用户账号" width="165" />
       <el-table-column prop="name" label="收货人" width="165" />
       <el-table-column prop="sumMoney" label="订单金额" width="165" />
-      <el-table-column prop="status" label="订单状态" width="165" />
+      <el-table-column label="订单状态" width="165">
+        <template slot-scope="scope">
+          <p v-if="scope.row.status=='1'">已发货</p>
+          <p v-else-if="scope.row.status=='2'">已完成</p>
+          <p v-else>已关闭</p>
+        </template>
+      </el-table-column>
       <el-table-column prop="autoReceiveTime" label="自动确认收货时间" width="165" />
       <el-table-column prop="maybeReceiveTime" label="订单应收时间" width="165" />
       <el-table-column fixed="right" label="操作" width="176">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="del(scope.row)">查看订单</el-button>
+          <el-button type="text" size="small" @click="look(scope.row)">查看订单</el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination
+      :current-page="currentPage"
+      :page-sizes="[2, 4, 6, 8]"
+      :page-size="pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="totalSize"
+      @size-change="sizeChange"
+      @current-change="currentChange"
+    />
+
+    <el-dialog v-if="dialogVisible" title="订单详情" :visible.sync="dialogVisible" width="40%">
+      <el-divider content-position="left">订单信息</el-divider>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        订单编号：<el-input v-model="orderNumber" readonly style="width: 160px;" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        订单金额：<el-input v-model="sumMoney" readonly style="width: 160px;" /></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        订单数量：<el-input v-model="counts" readonly style="width: 160px;" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        订单状态：<span v-if="status=='1'">已发货</span><span v-else-if="status=='2'">已完成</span><span v-else>已关闭</span>
+        <el-divider content-position="left">用户信息</el-divider>
+      </p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        用户账号：<el-input v-model="account" readonly style="width: 160px;" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        用户昵称：<el-input v-model="name" readonly style="width: 160px;" /></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        手&nbsp;&nbsp;机&nbsp;&nbsp;号：<el-input v-model="phoneNo" readonly style="width: 160px;" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        收货地址：<el-input v-model="address" readonly style="width: 160px;" /></p>
+      <el-divider content-position="left">商品信息</el-divider>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        商品名称：<el-input v-model="productName" readonly style="width: 160px;" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        商品单价：<el-input v-model="price" readonly style="width: 160px;" /></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        商品货号：<el-input v-model="productNumber" readonly style="width: 160px;" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        商品图片：<el-image style="width: 50px; height: 50px" :src="require('@/dir/imgs/'+image)" :preview-src-list="[require('@/dir/imgs/'+image)]" /></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        商品规格：<el-input v-model="productModel" readonly style="width: 160px;" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        商品颜色：<el-input v-model="productColor" readonly style="width: 160px;" /></p>
+      <el-button type="primary" @click="dialogVisible=false">关闭</el-button>
+    </el-dialog>
   </div>
 </template>
 
@@ -43,12 +94,14 @@
 export default {
   data() {
     return {
-      ordersList: [
-        { orderNumber: '', submitDate: '', account: '', name: '', sumMoney: '', status: '', autoReceiveTime: '', maybeReceiveTime: '' }
-      ],
+      ordersList: [],
       orderOrProduct: '',
       nameOrPhone: '',
-      time: ''
+      time: '',
+      pageSize: 2,
+      currentPage: 1,
+      totalSize: 0,
+      dialogVisible: false
     }
   },
   mounted() {
@@ -59,16 +112,46 @@ export default {
       var qwe = this
       this.$axios.get('http://localhost:8081/o/orders/selectOrders', {
         params: {
+          pageSize: this.pageSize,
+          currentPage: this.currentPage,
           orderOrProduct: this.orderOrProduct,
           nameOrPhone: this.nameOrPhone,
           time: this.time
         }
       })
         .then(function(res) {
-          qwe.ordersList = res.data
+          const result = res.data
+          qwe.ordersList = result.data
+          qwe.totalSize = result.dataSize
         }).catch(function(err) {
           console.log(err)
         })
+    },
+    look: function(e) {
+      this.dialogVisible = true
+      this.orderNumber = e.orderNumber
+      this.sumMoney = e.sumMoney
+      this.counts = e.counts
+      this.status = e.status
+      this.account = e.account
+      this.name = e.name
+      this.phoneNo = e.phoneNo
+      this.address = e.address
+      this.productName = e.productName
+      this.price = e.price
+      this.productNumber = e.productNumber
+      this.image = e.image
+      this.productModel = e.productModel
+      this.productColor = e.productColor
+    },
+    sizeChange(size) {
+      this.pageSize = size
+      this.currentPage = 1
+      this.selectOrders()
+    },
+    currentChange(page) {
+      this.currentPage = page
+      this.selectOrders()
     }
   }
 }</script>
