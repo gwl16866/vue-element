@@ -15,7 +15,11 @@
     <br><br>
     <el-table :data="returnReasonList" border style="width:100%">
       <el-table-column prop="reason" label="原因类型" width="370" />
-      <el-table-column prop="reasonTime" label="添加时间" width="370" />
+      <el-table-column prop="reasonTime" label="添加时间" width="370" >
+         <template slot-scope="scope">
+              {{scope.row.reasonTime | dateFormat}}
+            </template>
+      </el-table-column>
       <el-table-column label="是否启用" width="370">
         <template slot-scope="scope">
           <el-switch
@@ -50,8 +54,11 @@
         <el-form-item label="原因类型">
           <el-input v-model="reason" />
         </el-form-item>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <el-button type="primary" @click="dialogVisible=false">取消</el-button>
-        <el-button type="primary" :plain="true" @click="updateSubmit(dialogVisible=false)">提交</el-button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <el-button type="primary" @click="updateSubmit(dialogVisible=false)">提交</el-button>
       </el-form>
     </el-dialog>
   </div>

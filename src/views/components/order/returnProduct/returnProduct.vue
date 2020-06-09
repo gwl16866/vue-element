@@ -44,20 +44,34 @@
 
         <el-table :data="returnThingsList" border style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="40" />
-          <el-table-column prop="serverNumber" label="服务单号" width="180" />
-          <el-table-column prop="applyTime" label="申请时间" width="180" />
-          <el-table-column prop="account" label="用户账号" width="180" />
-          <el-table-column prop="sumMoney" label="退款金额" width="180" />
-          <el-table-column prop="name" label="联系人" width="180" />
-          <el-table-column prop="applyStatus" label="申请状态" width="180">
+          <el-table-column prop="serverNumber" label="服务单号" width="160" />
+          <el-table-column prop="applyTime" label="申请时间" width="160">
+              <template slot-scope="scope">
+              {{scope.row.applyTime | dateFormat}}
+            </template>
+          </el-table-column>
+
+       <el-table-column prop="account" label="收货人昵称/账号" width="160" >
+            <template slot-scope="scope">
+              {{scope.row.name}}({{scope.row.account}})
+            </template>
+      </el-table-column>
+      <el-table-column prop="phoneNo" label="收货人手机号" width="160" />
+
+          <el-table-column prop="sumMoney" label="退款金额" width="160" />
+          <el-table-column prop="applyStatus" label="申请状态" width="160">
             <template slot-scope="scope">
               <p v-if="scope.row.applyStatus=='1'">待处理</p>
               <p v-else-if="scope.row.applyStatus=='2'">已同意</p>
               <p v-else>已拒绝</p>
             </template>
           </el-table-column>
-          <el-table-column prop="dispose" label="处理时间" width="180" />
-          <el-table-column fixed="right" label="操作" width="180">
+          <el-table-column prop="dispose" label="处理时间" width="160">
+             <template slot-scope="scope">
+              {{scope.row.dispose | dateFormat}}
+            </template>
+          </el-table-column>
+          <el-table-column fixed="right" label="操作" width="160">
             <template slot-scope="scope">
               <el-button type="text" size="small" @click="lookRM(scope.row,dialogVisible=true)">详情</el-button>
               <el-button type="text" size="small" @click="agree(scope.row.id)">同意</el-button>
@@ -110,6 +124,14 @@
         商品规格：<el-input v-model="productModel" readonly style="width: 160px;" />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         商品颜色：<el-input v-model="productColor" readonly style="width: 160px;" /></p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-button type="primary" @click="dialogVisible=false">关闭</el-button>
     </el-dialog>
   </div>
@@ -138,7 +160,8 @@ export default {
   methods: {
     selectReturnThings: function(e) {
       this.isAgree = false
-      this.isRefuse = false
+      this.isRefuse = false;
+      this.applyStatus=''
       if (e !== null && e !== '') {
         if (e === 1) {
           this.applyStatus = 1

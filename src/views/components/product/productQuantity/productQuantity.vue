@@ -71,7 +71,7 @@
       </el-table-column>
       <el-table-column label="操作信息" width="165">
         <template slot-scope="scope">
-          <span>admin</span><p>{{ scope.row.quantityTime }}</p>
+          <span>admin</span><p> {{scope.row.applyTime | dateFormat}}</p>
         </template>
       </el-table-column>
     </el-table>
