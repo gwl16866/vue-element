@@ -1,6 +1,14 @@
 <template>
 <div id="app">
 
+
+<el-dialog title="添加类别" :visible.sync="showAdd" v-if="showAdd">
+<add></add>
+</el-dialog>
+
+
+
+
     <el-form :inline="true" class="demo-form-inline">
 
   <el-form-item label="商品分类">
@@ -76,7 +84,13 @@
 </template>
 
 <script>
+import add from '@/views/components/product/productModel/first/add.vue'
+
+
 export default {
+      components:{
+        add
+    },
      data(){
 
         return{
@@ -85,7 +99,8 @@ export default {
           pageSize: 5,
           currentPage: 1,
           totalSize: 0,
-          classId:""
+          classId:"",
+          showAdd:false
             
 
         }
@@ -188,7 +203,8 @@ export default {
     },indexMethod(index) {
       return index + 1;
     },addClass(){
-      
+      this.showAdd=true;
+
     }
 
    

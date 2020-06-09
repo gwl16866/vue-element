@@ -19,6 +19,7 @@ import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
 import * as filters from './filters' // global filters
+import moment from 'moment'
 
 /**
  * If you don't want to use mock-server
@@ -35,6 +36,10 @@ if (process.env.NODE_ENV === 'production') {
 
 Vue.use(Element)
 Vue.prototype.$axios=axios;
+Vue.filter('dateFormat', function (dateStr,pattern = "YYYY-MM-DD HH:mm:ss") {
+  return moment(dateStr).format(pattern);
+})
+
 
 // register global utility filters
 Object.keys(filters).forEach(key => {
