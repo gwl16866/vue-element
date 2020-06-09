@@ -1,6 +1,9 @@
 <template>
   <div><br>
     <el-form label-width="“150px”" :inline="true">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-form-item label="输入搜索">
         <el-col :span="30">
           <el-input v-model="productOrNumber" placeholder="商品名称/商品货号" />
@@ -21,7 +24,10 @@
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="selectQuantity()">搜索</el-button>
+        <el-button type="primary" @click="selectQuantity()"><i class="el-icon-search">搜索</i></el-button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <el-button type="primary" @click="refresh"><i class="el-icon-refresh-left">刷新</i></el-button>
       </el-form-item>
     </el-form>
 
@@ -126,6 +132,26 @@ export default {
     currentChange(page) {
       this.currentPage = page
       this.selectQuantity()
+    },
+    refresh: function() {
+      var qwe = this
+      this.$axios.get('http://localhost:8081/ku/quantity/selectQuantity', {
+        params: {
+          pageSize: this.pageSize,
+          currentPage: 1
+        }
+      })
+        .then(function(res) {
+          const result = res.data
+          qwe.quantity = result.data
+          qwe.totalSize = result.dataSize
+          qwe.currentPage = 1
+          qwe.productOrNumber = ''
+          qwe.status = ''
+          qwe.time = ''
+        }).catch(function(err) {
+          console.log(err)
+        })
     }
   }
 }</script>

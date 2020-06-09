@@ -1,6 +1,9 @@
 <template>
   <div><br>
     <el-form label-width="“150px”" :inline="true">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-form-item label="输入搜索">
         <el-col :span="30">
           <el-input v-model="orderOrProduct" placeholder="订单编号/商品货号" />
@@ -17,7 +20,10 @@
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="selectOrders()">搜索</el-button>
+        <el-button type="primary" @click="selectOrders()"><i class="el-icon-search">搜索</i></el-button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <el-button type="primary" @click="refresh"><i class="el-icon-refresh-left">刷新</i></el-button>
       </el-form-item>
     </el-form>
 
@@ -71,7 +77,7 @@
       <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         手&nbsp;&nbsp;机&nbsp;&nbsp;号：<el-input v-model="phoneNo" readonly style="width: 160px;" />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        收货地址：<el-input v-model="address" readonly style="width: 160px;" /></p>
+        收货地址：<el-input v-model="aname" readonly style="width: 160px;" /></p>
       <el-divider content-position="left">商品信息</el-divider>
       <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         商品名称：<el-input v-model="productName" readonly style="width: 160px;" />
@@ -136,7 +142,7 @@ export default {
       this.account = e.account
       this.name = e.name
       this.phoneNo = e.phoneNo
-      this.address = e.address
+      this.aname = e.aname
       this.productName = e.productName
       this.price = e.price
       this.productNumber = e.productNumber
@@ -152,6 +158,26 @@ export default {
     currentChange(page) {
       this.currentPage = page
       this.selectOrders()
+    },
+    refresh: function() {
+      const that = this
+      this.$axios.get('http://localhost:8081/o/orders/selectOrders', {
+        params: {
+          pageSize: that.pageSize,
+          currentPage: 1
+        }
+      })
+        .then(function(res) {
+          const result = res.data
+          that.ordersList = result.data
+          that.totalSize = result.dataSize
+          that.currentPage = 1
+          that.orderOrProduct = ''
+          that.nameOrPhone = ''
+          that.time = ''
+        }).catch(function(err) {
+          console.log(err)
+        })
     }
   }
 }</script>

@@ -1,14 +1,15 @@
 <template>
 
   <div id="app"><br>
-    <el-button type="primary" @click="dialogVisible2=true">新增</el-button>
+    <el-button type="primary" @click="dialogVisible2=true"><i class="el-icon-plus">新增</i></el-button>
+    <el-button type="primary" @click="refresh"><i class="el-icon-refresh-left">刷新</i></el-button>
     <el-dialog v-if="dialogVisible2" title="新增退货原因" :visible.sync="dialogVisible2" width="30%">
       <el-form>
         <el-form-item label="原因类型">
           <el-input v-model="reason" />
         </el-form-item>
         <el-button @click="dialogVisible2=false">取消</el-button>
-        <el-button @click="submitReason(dialogVisible2=false)">提交</el-button>
+        <el-button :plain="true" @click="submitReason(dialogVisible2=false)">提交</el-button>
       </el-form>
     </el-dialog>
     <br><br>
@@ -30,7 +31,7 @@
       <el-table-column fixed="right" label="操作" width="380">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="update(scope.row)">编辑</el-button>
-          <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
+          <el-button type="text" size="small" :plain="true" @click="del(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -50,7 +51,7 @@
           <el-input v-model="reason" />
         </el-form-item>
         <el-button type="primary" @click="dialogVisible=false">取消</el-button>
-        <el-button type="primary" @click="updateSubmit(dialogVisible=false)">提交</el-button>
+        <el-button type="primary" :plain="true" @click="updateSubmit(dialogVisible=false)">提交</el-button>
       </el-form>
     </el-dialog>
   </div>
@@ -104,6 +105,10 @@ export default {
       })
         .then(function(res = 1) {
           asd.selectReturnReason()
+          asd.$message({
+            message: '修改成功',
+            type: 'success'
+          })
         }).catch(function(err) {
           console.log(err)
         })
@@ -116,11 +121,16 @@ export default {
         }
       }).then(function(res = 1) {
         asd.selectReturnReason()
+        asd.$message({
+          message: '添加成功',
+          type: 'success'
+        })
       }).catch(function(err) {
         console.log(err)
       })
     },
     changeStatus: function(data) {
+      const asd = this
       this.$axios.get('http://localhost:8081/re/returnmoney/OpenOrNotStatus', {
         params: {
           id: data.id,
@@ -128,18 +138,51 @@ export default {
         }
       })
         .then(function(res = 1) {
+          var str = ''
+          if (data.reasonStatus === 1) {
+            str = '启用成功'
+          } else {
+            str = '禁止成功'
+          }
+          asd.$message({
+            message: str,
+            type: 'success'
+          })
+
           console.log(res)
         }).catch(function(err) {
           console.log(err)
         })
     },
-    del: function(data) {
-      this.$axios.get('http://localhost:8081/re/returnmoney/deleteReason?id=' + data.id)
-        .then(function(res) {
-          this.selectReturnReason()
-        }).catch(function(err) {
-          console.log(err)
+    del(e) {
+      this.$confirm('确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const asd = this
+        this.$axios.get('http://localhost:8081/re/returnmoney/deleteReason?id=' + e.id)
+          .then(function(res = 1) {
+            asd.selectReturnReason()
+            asd.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+          }).catch(function(err) {
+            asd.$message({
+              message: '删除失败',
+              type: 'success'
+            })
+            console.log(err)
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          showClose: true,
+          duration: 1000,
+          message: '已取消删除'
         })
+      })
     },
     sizeChange(size) {
       this.pageSize = size
@@ -150,6 +193,23 @@ export default {
     currentChange(page) {
       this.currentPage = page
       this.selectReturnReason()
+    },
+    refresh: function() {
+      var qwe = this
+      this.$axios.get('http://localhost:8081/re/returnmoney/selectReturnReason', {
+        params: {
+          pageSize: this.pageSize,
+          currentPage: 1
+        }
+      })
+        .then(function(res) {
+          const result = res.data
+          qwe.totalSize = result.dataSize
+          qwe.returnReasonList = result.data
+          qwe.currentPage = 1
+        }).catch(function(err) {
+          console.log(err)
+        })
     }
   }
 }</script>
