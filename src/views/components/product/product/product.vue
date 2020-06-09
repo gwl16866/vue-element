@@ -142,8 +142,9 @@ export default {
       shangjia:"",
       shenhe:"",
       shanchu:"",
-      isOne:true,
-      isTwo:true,
+      isOne:false,
+      isTwo:false,
+      isThree:false,
       idss:[]
 
 
@@ -157,28 +158,41 @@ export default {
          this.shenhe="";
          this.isOne=true;
          this.isTwo=false;
+         this.isThree=false;
+         this.shanchu="";
+         this.currentPage=1;
        }else if(e == 2){
          this.shangjia=2;
          this.shenhe="";
          this.isOne=false;
          this.isTwo=true;
+          this.isThree=false;
+           this.shanchu="";
+          this.currentPage=1;
        }else if(e == 3){
          this.shenhe=2;
          this.shangjia="";
           this.isOne=true;
          this.isTwo=true;
+          this.isThree=false;
+           this.shanchu="";
+          this.currentPage=1;
        }else if(e == 4){
          this.shenhe=0;
          this.shangjia="";
           this.isOne=true;
          this.isTwo=true;
+          this.isThree=false;
+         this.shanchu="";
+         this.currentPage=1;
        }else if(e == 5){
          this.shanchu=0;
          this.shenhe="";
          this.shangjia="";
-         this.isOne=false;
-         this.isTwo=false;
-         this.isThree=false;
+         this.isOne=true;
+         this.isTwo=true;
+         this.isThree=true;
+        this.currentPage=1;
        }
      }
       const that = this;
@@ -286,6 +300,10 @@ this.$confirm('确定删除?删除后自动下架！', '提示', {
           that.product.classes="";
           that.shangjia="";
           that.shenhe="";
+          that.shanchu="";
+          that.isOne=false;
+          that.isTwo=false;
+          that.isThree=false;
 
         })
         .catch(function(error) {
@@ -295,7 +313,17 @@ this.$confirm('确定删除?删除后自动下架！', '提示', {
     },changeSwitch(e){
       
       const that = this;
-      this.$axios.get('http://localhost:8081/product/updateUpStatusById',{ 
+      if(e.status ==0 || e.status == 2){
+        e.upStatus=2;
+           that.$message({
+                              showClose:true,
+                              duration:1000,
+                              message: '先审核,后上架',
+                              type: 'error'
+                         });
+
+      }else{
+        this.$axios.get('http://localhost:8081/product/updateUpStatusById',{ 
                        params:{
                           upStatus:e.upStatus,
                           pid:e.pid
@@ -308,6 +336,7 @@ this.$confirm('确定删除?删除后自动下架！', '提示', {
                               message: '上架成功',
                               type: 'success'
                          });
+                          that.query();
 
                    }else if(res.data.code == 200 && e.upStatus == 2){
                        that.$message({
@@ -316,6 +345,7 @@ this.$confirm('确定删除?删除后自动下架！', '提示', {
                               message: '下架成功',
                               type: 'success'
                          });
+                          that.query();
 
                    }else if(res.data.code == 400){
                          that.$message({
@@ -329,6 +359,9 @@ this.$confirm('确定删除?删除后自动下架！', '提示', {
                 }).catch(function (error) {
                     console.log(error);
                 });
+
+      }
+      
 
     },  handleSelectionChange(val) {
             const ids=new Array();
@@ -346,20 +379,26 @@ this.$confirm('确定删除?删除后自动下架！', '提示', {
                               type: 'error'
                          });
 
-        }else{
-          const that = this;
+        
+
+      }else{
            if(e == 'shangjia'){
-                this.$axios.get("http://localhost:8081/product/controlSome", {
+
+             this.$confirm('只批量上架已审核商品，继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          const that = this;
+          this.$axios.get("http://localhost:8081/product/controlSome", {
           params: {
             type:"shangjia",
             ids:that.idss
           },
           paramsSerializer:params => {
             return qs.stringify(params,{indices: false})
-          }
-         
-        })
-        .then(function(res) {
+          } 
+        }).then(function(res) {
             if(res.data.code == 200){
                         that.$message({
                               showClose:true,
@@ -368,19 +407,38 @@ this.$confirm('确定删除?删除后自动下架！', '提示', {
                               type: 'success'
                          });
                          that.query();
-                   }else{
+                   }else if(res.data.code == 300){
                        that.$message({
+                              showClose:true,
+                              duration:1000,
+                              message: '没有可批量上架的商品',
+                              type: 'error'
+                         });
+                        that.query();
+                   }else{
+                          that.$message({
                               showClose:true,
                               duration:1000,
                               message: '批量上架失败',
                               type: 'error'
                          });
-
                    }
         })
         .catch(function(error) {
           console.log(error);
         });
+          
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+             showClose:true,
+             duration:1000,
+            message: '已取消批量上架'
+          });          
+        });
+
+
         }else if(e == 'xiajia'){
               this.$axios.get("http://localhost:8081/product/controlSome", {
           params: {

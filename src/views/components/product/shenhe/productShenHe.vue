@@ -51,6 +51,7 @@
     <el-button type="primary" @click="query(2)">已审核</el-button><br><br>
     <el-button type="primary" @click="query(3)">待审核</el-button><br><br>
     <el-button type="primary" @click="query(4)">已拒绝</el-button><br><br>
+    <el-button type="primary" @click="query(5)">已删除</el-button><br><br>
       
       </el-aside>
       <el-main>
@@ -155,7 +156,9 @@ export default {
       shenhe:"",
       idss:[],
       showDialog:false,
-      open1:false
+      open1:false,
+      shanchu:"",
+      showStatus:""
 
 
     };
@@ -164,6 +167,16 @@ export default {
     changeSwitch(e){
       
       const that = this;
+      if(e.status ==0 || e.status == 2){
+        e.upStatus=2;
+           that.$message({
+                              showClose:true,
+                              duration:1000,
+                              message: '先审核,后上架',
+                              type: 'error'
+                         });
+
+      }else{
       this.$axios.get('http://localhost:8081/product/updateUpStatusById',{ 
                        params:{
                           upStatus:e.upStatus,
@@ -177,7 +190,7 @@ export default {
                               message: '上架成功',
                               type: 'success'
                          });
-
+                        that.query();
                    }else if(res.data.code == 200 && e.upStatus == 2){
                        that.$message({
                               showClose:true,
@@ -185,7 +198,7 @@ export default {
                               message: '下架成功',
                               type: 'success'
                          });
-
+                         that.query();
                    }else if(res.data.code == 400){
                          that.$message({
                               showClose:true,
@@ -199,6 +212,7 @@ export default {
                     console.log(error);
                 });
 
+      }
     }
     ,handleSelectionChange(val) {
             const ids=new Array();
@@ -212,10 +226,20 @@ export default {
      if(e != null && e != ""){
        if(e == 2){
          this.shenhe=1;
+         this.shanchu="";
+          this.currentPage=1;
        }else if(e == 3){
          this.shenhe=2;
+          this.shanchu="";
+          this.currentPage=1;
        }else if(e == 4){
-         this.shenhe=0;
+          this.shenhe=0;
+          this.shanchu="";
+          this.currentPage=1;
+       }else if(e == 5){
+         this.shenhe="";
+          this.shanchu=0;
+          this.currentPage=1;
        }
      }
       const that = this;
@@ -226,6 +250,7 @@ export default {
             productName:that.product.productName,
             classes:that.product.classes,
             status:that.shenhe,
+            isShow:that.shanchu
           }
         })
         .then(function(res) {
@@ -253,6 +278,11 @@ export default {
         })
     },
     shenheButton(e) {
+        if(e.isShow ==2){
+            this.showStatus=1;
+            alert(this.showStatus);
+          }
+
       this.$confirm('确定审核通过?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -262,7 +292,8 @@ export default {
             this.$axios.get('http://localhost:8081/product/updateStatusById',{ 
                        params:{
                           pid:e.pid,
-                          status:1   
+                          status:1,
+                          showStatus:that.showStatus
                        }
                 }).then(function(res){
                    if(res.data.code == 200){
