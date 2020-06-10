@@ -242,6 +242,10 @@ export default {
           this.currentPage=1;
        }
      }
+          //模糊查询 当前页设置为第一页
+     if(this.product.productName != null || this.product.productName != "" || this.product.classes != null || this.product.classes != ""){
+        this.currentPage=1;
+     }
       const that = this;
       this.$axios.get("http://localhost:8081/product/queryProduct", {
           params: {
