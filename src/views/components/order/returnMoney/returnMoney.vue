@@ -30,10 +30,10 @@
     <el-container>
       <el-aside width="130px">
         <br>
-        <el-button type="primary" size="medium" @click="selectReturnMoney()">全&nbsp;&nbsp;&nbsp;部()</el-button><br><br>
-        <el-button type="primary" size="medium" @click="selectReturnMoney(1)">待处理()</el-button><br><br>
-        <el-button type="primary" size="medium" @click="selectReturnMoney(2)">已同意()</el-button><br><br>
-        <el-button type="primary" size="medium" @click="selectReturnMoney(3)">已拒绝()</el-button><br><br>
+        <el-button type="primary" size="medium" @click="selectReturnMoney()">全&nbsp;&nbsp;&nbsp;部({{AllSize}})</el-button><br><br>
+        <el-button type="primary" size="medium" @click="selectPending()">待处理({{pendingSize}})</el-button><br><br>
+        <el-button type="primary" size="medium" @click="selectAgree()">已同意({{agreeSize}})</el-button><br><br>
+        <el-button type="primary" size="medium" @click="selectRefuse()">已拒绝({{refuseSize}})</el-button><br><br>
       </el-aside>
       <el-main>
 
@@ -153,35 +153,24 @@ export default {
       count: '',
       batchList: [],
       isAgree: false,
-      isRefuse: false
+      isRefuse: false,
+      AllSize:'',
+      pendingSize:'',
+      agreeSize:'',
+      refuseSize:''
     }
   },
   mounted() {
-    this.selectReturnMoney()
+    this.selectReturnMoney();
+    this.selectPending();
+    this.selectAgree();
+    this.selectRefuse()
   },
   methods: {
-    selectReturnMoney: function(e) {
+    selectReturnMoney: function() {
       this.isAgree = false
       this.isRefuse = false
-      this.applyStatus='';
-      if (e !== null && e !== '') {
-        if (e === 1) {
-          this.applyStatus = 1
-          this.isAgree = false
-          this.isRefuse = false
-          this.currentPage = 1
-        } else if (e === 2) {
-          this.applyStatus = 2
-          this.isAgree = true
-          this.isRefuse = false
-          this.currentPage = 1
-        } else if (e === 3) {
-          this.applyStatus = 3
-          this.isAgree = false
-          this.isRefuse = true
-          this.currentPage = 1
-        }
-      }
+      this.applyStatus=''
       var qwe = this
       this.$axios.get('http://localhost:8081/re/returnmoney/selectReturnMoney', {
         params: {
@@ -195,6 +184,76 @@ export default {
       }).then(function(res) {
         const result = res.data
         qwe.returnMoneyList = result.data
+        qwe.AllSize = result.dataSize
+        qwe.totalSize = result.dataSize
+      }).catch(function(err) {
+        console.log(err)
+      })
+    },
+    selectPending:function(){
+      this.isAgree = false
+      this.isRefuse = false
+      this.applyStatus = 1
+       var qwe = this
+      this.$axios.get('http://localhost:8081/re/returnmoney/selectReturnMoney', {
+        params: {
+          pageSize: this.pageSize,
+          currentPage: this.currentPage,
+          serverNumber: this.serverNumber,
+          nameOrPhone: this.nameOrPhone,
+          applyStatus: this.applyStatus,
+          time: this.time
+        }
+      }).then(function(res) {
+        const result = res.data
+        qwe.returnMoneyList = result.data
+        qwe.pendingSize = result.dataSize
+        qwe.totalSize = result.dataSize
+      }).catch(function(err) {
+        console.log(err)
+      })
+    },
+    selectAgree:function(){
+      this.isAgree = true
+      this.isRefuse = false
+      this.applyStatus = 2
+       var qwe = this
+      this.$axios.get('http://localhost:8081/re/returnmoney/selectReturnMoney', {
+        params: {
+          pageSize: this.pageSize,
+          currentPage: this.currentPage,
+          serverNumber: this.serverNumber,
+          nameOrPhone: this.nameOrPhone,
+          applyStatus: this.applyStatus,
+          time: this.time
+        }
+      }).then(function(res) {
+        const result = res.data
+        qwe.returnMoneyList = result.data
+        qwe.agreeSize = result.dataSize
+        qwe.totalSize = result.dataSize
+      }).catch(function(err) {
+        console.log(err)
+      })
+    },
+    selectRefuse:function(){
+      this.isAgree = false
+      this.isRefuse = true
+      this.applyStatus = 3
+       var qwe = this
+      this.$axios.get('http://localhost:8081/re/returnmoney/selectReturnMoney', {
+        params: {
+          pageSize: this.pageSize,
+          currentPage: this.currentPage,
+          serverNumber: this.serverNumber,
+          nameOrPhone: this.nameOrPhone,
+          applyStatus: this.applyStatus,
+          time: this.time
+        }
+      }).then(function(res) {
+        const result = res.data
+        qwe.returnMoneyList = result.data
+        qwe.refuseSize = result.dataSize
         qwe.totalSize = result.dataSize
       }).catch(function(err) {
         console.log(err)

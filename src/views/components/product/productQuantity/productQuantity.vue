@@ -11,7 +11,7 @@
       </el-form-item>
       <el-form-item label="操作类型">
         <el-col :span="30">
-          <el-select v-model="status" placeholder="全部">
+          <el-select v-model="controlClass" placeholder="全部">
             <el-option label="退货时" value="1" />
             <el-option label="添加商品" value="2" />
             <el-option label="订单发货时" value="3" />
@@ -48,24 +48,29 @@
           货号:<p>{{ scope.row.productNumber }}</p>
         </template>
       </el-table-column>
-      <el-table-column prop="orderNumber" label="订单号" width="165" />
+      <el-table-column  label="订单号" width="165">
+        <template slot-scope="scope">
+          <span v-if="scope.row.controlClass=='2'">N/A</span>
+          <span v-else>{{ scope.row.orderNumber }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="库存" width="165">
         <template slot-scope="scope">
-          数量: <span v-if="scope.row.status=='3'">-{{ scope.row.counts }}</span>
+          数量: <span v-if="scope.row.controlClass=='3'">-{{ scope.row.counts }}</span>
           <span v-else>+{{ scope.row.counts }}</span>
           <p>剩余:<span>{{ scope.row.count }}</span></p>
         </template>
       </el-table-column>
       <el-table-column label="库存类型" width="165">
         <template slot-scope="scope">
-          <p v-if="scope.row.controlClass=='1'">商品库存</p>
+          <p v-if="scope.row.status=='1'">商品库存</p>
           <p v-else>货品库存</p>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="操作类型" width="165">
+      <el-table-column  label="操作类型" width="165">
         <template slot-scope="scope">
-          <p v-if="scope.row.status=='1'">退货时</p>
-          <p v-else-if="scope.row.status=='2'">添加商品</p>
+          <p v-if="scope.row.controlClass=='1'">退货时</p>
+          <p v-else-if="scope.row.controlClass=='2'">添加商品</p>
           <p v-else>订单发货时</p>
         </template>
       </el-table-column>
@@ -93,7 +98,7 @@ export default {
     return {
       quantity: [],
       productOrNumber: '',
-      status: '',
+      controlClass: '',
       time: '',
       pageSize: 2,
       currentPage: 1,
@@ -111,7 +116,7 @@ export default {
           pageSize: this.pageSize,
           currentPage: this.currentPage,
           productOrNumber: this.productOrNumber,
-          status: this.status,
+          controlClass: this.controlClass,
           time: this.time
         }
       })
@@ -147,7 +152,7 @@ export default {
           qwe.totalSize = result.dataSize
           qwe.currentPage = 1
           qwe.productOrNumber = ''
-          qwe.status = ''
+          qwe.controlClass = ''
           qwe.time = ''
         }).catch(function(err) {
           console.log(err)

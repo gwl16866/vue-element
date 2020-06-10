@@ -30,10 +30,10 @@
     <el-container>
       <el-aside width="130px">
         <br>
-        <el-button type="primary" size="medium" @click="selectReturnThings()">全&nbsp;&nbsp;&nbsp;部()</el-button><br><br>
-        <el-button type="primary" size="medium" @click="selectReturnThings(1)">待处理()</el-button><br><br>
-        <el-button type="primary" size="medium" @click="selectReturnThings(2)">已同意()</el-button><br><br>
-        <el-button type="primary" size="medium" @click="selectReturnThings(3)">已拒绝()</el-button><br><br>
+        <el-button type="primary" size="medium" @click="selectReturnThings()">全&nbsp;&nbsp;&nbsp;部({{AllSize}})</el-button><br><br>
+        <el-button type="primary" size="medium" @click="selectPending()">待处理({{pendingSize}})</el-button><br><br>
+        <el-button type="primary" size="medium" @click="selectAgree()">已同意({{agreeSize}})</el-button><br><br>
+        <el-button type="primary" size="medium" @click="selectRefuse()">已拒绝({{refuseSize}})</el-button><br><br>
       </el-aside>
       <el-main>
 
@@ -151,35 +151,24 @@ export default {
       currentPage: 1,
       totalSize: 0,
       dialogVisible: false,
-      batchList: []
+      batchList: [],
+       AllSize:'',
+      pendingSize:'',
+      agreeSize:'',
+      refuseSize:''
     }
   },
   mounted() {
     this.selectReturnThings()
+    this.selectPending();
+    this.selectAgree();
+    this.selectRefuse()
   },
   methods: {
-    selectReturnThings: function(e) {
+    selectReturnThings: function() {
       this.isAgree = false
       this.isRefuse = false;
       this.applyStatus=''
-      if (e !== null && e !== '') {
-        if (e === 1) {
-          this.applyStatus = 1
-          this.isAgree = false
-          this.isRefuse = false
-          this.currentPage = 1
-        } else if (e === 2) {
-          this.applyStatus = 2
-          this.isAgree = true
-          this.isRefuse = false
-          this.currentPage = 1
-        } else if (e === 3) {
-          this.applyStatus = 3
-          this.isAgree = false
-          this.isRefuse = true
-          this.currentPage = 1
-        }
-      }
       var qwe = this
       this.$axios.get('http://localhost:8081/re/returnthings/selectReturnThings', {
         params: {
@@ -194,10 +183,80 @@ export default {
         .then(function(res) {
           const result = res.data
           qwe.returnThingsList = result.data
+          qwe.AllSize=result.dataSize
           qwe.totalSize = result.dataSize
         }).catch(function(err) {
           console.log(err)
         })
+    },
+    selectPending:function(){
+      this.isAgree = false
+      this.isRefuse = false
+      this.applyStatus = 1
+       var qwe = this
+      this.$axios.get('http://localhost:8081/re/returnthings/selectReturnThings', {
+        params: {
+          pageSize: this.pageSize,
+          currentPage: this.currentPage,
+          serverNumber: this.serverNumber,
+          nameOrPhone: this.nameOrPhone,
+          applyStatus: this.applyStatus,
+          time: this.time
+        }
+      }).then(function(res) {
+        const result = res.data
+        qwe.returnMoneyList = result.data
+        qwe.pendingSize = result.dataSize
+        qwe.totalSize = result.dataSize
+      }).catch(function(err) {
+        console.log(err)
+      })
+    },
+    selectAgree:function(){
+      this.isAgree = true
+      this.isRefuse = false
+      this.applyStatus = 2
+       var qwe = this
+      this.$axios.get('http://localhost:8081/re/returnthings/selectReturnThings', {
+        params: {
+          pageSize: this.pageSize,
+          currentPage: this.currentPage,
+          serverNumber: this.serverNumber,
+          nameOrPhone: this.nameOrPhone,
+          applyStatus: this.applyStatus,
+          time: this.time
+        }
+      }).then(function(res) {
+        const result = res.data
+        qwe.returnMoneyList = result.data
+        qwe.agreeSize = result.dataSize
+        qwe.totalSize = result.dataSize
+      }).catch(function(err) {
+        console.log(err)
+      })
+    },
+    selectRefuse:function(){
+      this.isAgree = false
+      this.isRefuse = true
+      this.applyStatus = 3
+       var qwe = this
+      this.$axios.get('http://localhost:8081/re/returnthings/selectReturnThings', {
+        params: {
+          pageSize: this.pageSize,
+          currentPage: this.currentPage,
+          serverNumber: this.serverNumber,
+          nameOrPhone: this.nameOrPhone,
+          applyStatus: this.applyStatus,
+          time: this.time
+        }
+      }).then(function(res) {
+        const result = res.data
+        qwe.returnMoneyList = result.data
+        qwe.refuseSize = result.dataSize
+        qwe.totalSize = result.dataSize
+      }).catch(function(err) {
+        console.log(err)
+      })
     },
     sizeChange(size) {
       this.pageSize = size
