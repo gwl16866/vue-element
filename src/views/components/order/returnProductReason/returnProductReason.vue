@@ -120,7 +120,7 @@ export default {
           console.log(err)
         })
     },
-    submitReason: function(e) {
+    submitReason: function() {
       const asd = this
       this.$axios.get('http://localhost:8081/re/returnmoney/addReason', {
         params: {

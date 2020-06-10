@@ -314,6 +314,29 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/components6',
+    component: Layout,
+    redirect: '/components/run',
+    alwaysShow: true, // will always show the root menu
+    name: 'run',
+    meta: {
+      title: '运营',
+      icon: 'lock',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'seckill',
+        component: () => import('@/views/components/run/seckill'),
+        name: 'seckill',
+        meta: {
+          title: '秒杀活动',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
 
   /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter,
