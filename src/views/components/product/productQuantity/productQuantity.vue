@@ -6,12 +6,12 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-form-item label="输入搜索">
         <el-col :span="30">
-          <el-input v-model="productOrNumber" placeholder="商品名称/商品货号" />
+          <el-input v-model="productOrNumber" placeholder="商品名称/商品货号" @change="putChange" />
         </el-col>
       </el-form-item>
       <el-form-item label="操作类型">
         <el-col :span="30">
-          <el-select v-model="controlClass" placeholder="全部">
+          <el-select v-model="controlClass" placeholder="全部" @change="putChange">
             <el-option label="退货时" value="1" />
             <el-option label="添加商品" value="2" />
             <el-option label="订单发货时" value="3" />
@@ -20,7 +20,7 @@
       </el-form-item>
       <el-form-item label="申请时间">
         <el-col :span="11">
-          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" />
+          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" @change="putChange"/>
         </el-col>
       </el-form-item>
       <el-form-item>
@@ -110,6 +110,7 @@ export default {
   },
   methods: {
     selectQuantity: function() {
+    
       var qwe = this
       this.$axios.get('http://localhost:8081/ku/quantity/selectQuantity', {
         params: {
@@ -157,6 +158,9 @@ export default {
         }).catch(function(err) {
           console.log(err)
         })
+    },
+    putChange:function(){
+      this.currentPage=1
     }
   }
 }</script>

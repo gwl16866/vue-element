@@ -6,17 +6,17 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-form-item label="输入搜索">
         <el-col :span="30">
-          <el-input v-model="serverNumber" placeholder="服务单号" />
+          <el-input v-model="serverNumber" placeholder="服务单号" @change="putChange" />
         </el-col>
       </el-form-item>
       <el-form-item label="收货人">
         <el-col :span="30">
-          <el-input v-model="nameOrPhone" placeholder="收货人姓名/手机号" />
+          <el-input v-model="nameOrPhone" placeholder="收货人姓名/手机号"  @change="putChange" />
         </el-col>
       </el-form-item>
       <el-form-item label="申请时间">
         <el-col :span="11">
-          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" />
+          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"   @change="putChange"/>
         </el-col>
       </el-form-item>
       <el-form-item>
@@ -161,15 +161,17 @@ export default {
     }
   },
   mounted() {
-    this.selectReturnMoney();
     this.selectPending();
     this.selectAgree();
-    this.selectRefuse()
+     this.selectRefuse()
+    this.selectReturnMoney();
   },
   methods: {
+    //查询所有
     selectReturnMoney: function() {
-      this.isAgree = false
-      this.isRefuse = false
+      const t=this;
+      t.isAgree = false
+      t.isRefuse = false
       this.applyStatus=''
       var qwe = this
       this.$axios.get('http://localhost:8081/re/returnmoney/selectReturnMoney', {
@@ -190,10 +192,14 @@ export default {
         console.log(err)
       })
     },
+    //查询待处理
     selectPending:function(){
-      this.isAgree = false
-      this.isRefuse = false
-      this.applyStatus = 1
+      const t=this;
+    
+      t.isAgree = false
+      t.isRefuse = false
+      this.applyStatus=1
+      this.currentPage=1;
        var qwe = this
       this.$axios.get('http://localhost:8081/re/returnmoney/selectReturnMoney', {
         params: {
@@ -213,10 +219,14 @@ export default {
         console.log(err)
       })
     },
+    //查询已同意
     selectAgree:function(){
-      this.isAgree = true
-      this.isRefuse = false
+    
+     const t=this;
+      t.isAgree = true
+      t.isRefuse = false
       this.applyStatus = 2
+      this.currentPage=1;
        var qwe = this
       this.$axios.get('http://localhost:8081/re/returnmoney/selectReturnMoney', {
         params: {
@@ -236,10 +246,14 @@ export default {
         console.log(err)
       })
     },
+    //查询已拒绝
     selectRefuse:function(){
-      this.isAgree = false
-      this.isRefuse = true
+      const t=this;
+      t.isAgree = false
+      t.isRefuse = true
       this.applyStatus = 3
+       this.currentPage=1;
+    
        var qwe = this
       this.$axios.get('http://localhost:8081/re/returnmoney/selectReturnMoney', {
         params: {
@@ -268,6 +282,7 @@ export default {
       this.currentPage = page
       this.selectReturnMoney()
     },
+    //详情
     lookRM: function(e, d) {
       this.serverNumber = e.serverNumber
       this.applyTime = e.applyTime
@@ -285,6 +300,7 @@ export default {
       this.productModel = e.productModel
       this.productColor = e.productColor
     },
+    //同意
     agree(data) {
       this.$confirm('确定同意?同意后钱会自动转回！', '提示', {
         confirmButtonText: '确定',
@@ -311,6 +327,7 @@ export default {
         })
       })
     },
+    //拒绝
     refuse(data) {
       this.$confirm('确定拒绝?', '提示', {
         confirmButtonText: '确定',
@@ -337,6 +354,7 @@ export default {
         })
       })
     },
+    //刷新
     refresh: function() {
       this.isAgree = false
       this.isRefuse = false
@@ -358,15 +376,17 @@ export default {
         console.log(err)
       })
     },
+    //循环id
     handleSelectionChange(val) {
-      const bl = []
+      const bl = new Array()
       val.forEach(row => {
         bl.push(row.id)
       })
       this.batchList = bl
     },
+    //批量同意/拒绝
     batch(e) {
-      if (this.batchList === null || this.batchList === '') {
+      if (this.batchList.length == 0) {
         this.$message({
           showClose: true,
           duration: 1000,
@@ -378,8 +398,8 @@ export default {
         if (e === 'agree') {
           this.$axios.get('http://localhost:8081/re/returnmoney/batch', {
             params: {
-              type: 'agree',
-              batchList: that.batchList
+              batchList: this.batchList,
+              type: 'agree'
             },
             paramsSerializer: params => {
               return qs.stringify(params, { indices: false })
@@ -392,7 +412,10 @@ export default {
                 message: '批量同意成功',
                 type: 'success'
               })
-              that.selectReturnMoney()
+                  that.selectPending();
+    that.selectAgree();
+     that.selectRefuse()
+    that.selectReturnMoney()
             })
             .catch(function(error) {
               that.$message({
@@ -407,7 +430,7 @@ export default {
           this.$axios.get('http://localhost:8081/re/returnmoney/batch', {
             params: {
               type: 'refuse',
-              batchList: that.batchList
+              batchList: this.batchList
             },
             paramsSerializer: params => {
               return qs.stringify(params, { indices: false })
@@ -433,6 +456,9 @@ export default {
             })
         }
       }
+    },
+    putChange:function(){
+      this.currentPage=1
     }
   }
 }</script>

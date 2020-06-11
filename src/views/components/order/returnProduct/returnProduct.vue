@@ -6,17 +6,17 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-form-item label="输入搜索">
         <el-col :span="30">
-          <el-input v-model="serverNumber" placeholder="服务单号" />
+          <el-input v-model="serverNumber" placeholder="服务单号" @change="putChange"/>
         </el-col>
       </el-form-item>
       <el-form-item label="收货人">
         <el-col :span="30">
-          <el-input v-model="nameOrPhone" placeholder="收货人姓名/手机号" />
+          <el-input v-model="nameOrPhone" placeholder="收货人姓名/手机号" @change="putChange"/>
         </el-col>
       </el-form-item>
       <el-form-item label="申请时间">
         <el-col :span="11">
-          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" />
+          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" @change="putChange"/>
         </el-col>
       </el-form-item>
       <el-form-item>
@@ -155,19 +155,24 @@ export default {
        AllSize:'',
       pendingSize:'',
       agreeSize:'',
-      refuseSize:''
+      refuseSize:'',
+      isAgree:false,
+      isRefuse:false
     }
   },
   mounted() {
-    this.selectReturnThings()
-    this.selectPending();
+     this.selectPending();
     this.selectAgree();
     this.selectRefuse()
+    this.selectReturnThings()
   },
   methods: {
     selectReturnThings: function() {
-      this.isAgree = false
-      this.isRefuse = false;
+
+     
+     const t=this;
+      t.isAgree = false
+      t.isRefuse = false;
       this.applyStatus=''
       var qwe = this
       this.$axios.get('http://localhost:8081/re/returnthings/selectReturnThings', {
@@ -190,9 +195,12 @@ export default {
         })
     },
     selectPending:function(){
-      this.isAgree = false
-      this.isRefuse = false
+       const t=this;
+      t.isAgree = false
+      t.isRefuse = false
       this.applyStatus = 1
+       this.currentPage=1;
+    
        var qwe = this
       this.$axios.get('http://localhost:8081/re/returnthings/selectReturnThings', {
         params: {
@@ -205,7 +213,7 @@ export default {
         }
       }).then(function(res) {
         const result = res.data
-        qwe.returnMoneyList = result.data
+        qwe.returnThingsList = result.data
         qwe.pendingSize = result.dataSize
         qwe.totalSize = result.dataSize
       }).catch(function(err) {
@@ -213,9 +221,12 @@ export default {
       })
     },
     selectAgree:function(){
-      this.isAgree = true
-      this.isRefuse = false
+       const t=this;
+      t.isAgree = true
+      t.isRefuse = false
       this.applyStatus = 2
+       this.currentPage=1;
+    
        var qwe = this
       this.$axios.get('http://localhost:8081/re/returnthings/selectReturnThings', {
         params: {
@@ -228,7 +239,7 @@ export default {
         }
       }).then(function(res) {
         const result = res.data
-        qwe.returnMoneyList = result.data
+        qwe.returnThingsList = result.data
         qwe.agreeSize = result.dataSize
         qwe.totalSize = result.dataSize
       }).catch(function(err) {
@@ -236,9 +247,12 @@ export default {
       })
     },
     selectRefuse:function(){
-      this.isAgree = false
-      this.isRefuse = true
+       const t=this;
+      t.isAgree = false
+      t.isRefuse = true
       this.applyStatus = 3
+       this.currentPage=1;
+    
        var qwe = this
       this.$axios.get('http://localhost:8081/re/returnthings/selectReturnThings', {
         params: {
@@ -251,13 +265,14 @@ export default {
         }
       }).then(function(res) {
         const result = res.data
-        qwe.returnMoneyList = result.data
+        qwe.returnThingsList = result.data
         qwe.refuseSize = result.dataSize
         qwe.totalSize = result.dataSize
       }).catch(function(err) {
         console.log(err)
       })
     },
+    
     sizeChange(size) {
       this.pageSize = size
       this.currentPage = 1
@@ -367,7 +382,7 @@ export default {
       this.batchList = bl
     },
     batch(e) {
-      if (this.batchList === null || this.batchList === '') {
+      if (this.batchList.length ==0) {
         this.$message({
           showClose: true,
           duration: 1000,
@@ -421,7 +436,10 @@ export default {
                 message: '批量拒绝成功',
                 type: 'success'
               })
-              that.selectReturnThings()
+                that.selectPending();
+    that.selectAgree();
+    that.selectRefuse()
+    that.selectReturnThings()
             })
             .catch(function(error) {
               that.$message({
@@ -434,6 +452,9 @@ export default {
             })
         }
       }
+    },
+    putChange:function(){
+      this.currentPage=1
     }
   }
 }</script>

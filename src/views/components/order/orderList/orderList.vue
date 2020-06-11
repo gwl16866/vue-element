@@ -6,17 +6,17 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-form-item label="输入搜索">
         <el-col :span="30">
-          <el-input v-model="orderOrProduct" placeholder="订单编号/商品货号" />
+          <el-input v-model="orderOrProduct" placeholder="订单编号/商品货号"  @change="putChange" />
         </el-col>
       </el-form-item>
       <el-form-item label="收货人">
         <el-col :span="30">
-          <el-input v-model="nameOrPhone" placeholder="收货人姓名/手机号码" />
+          <el-input v-model="nameOrPhone" placeholder="收货人姓名/手机号码"  @change="putChange" />
         </el-col>
       </el-form-item>
       <el-form-item label="提交时间">
         <el-col :span="11">
-          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" />
+          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"  @change="putChange"/>
         </el-col>
       </el-form-item>
       <el-form-item>
@@ -122,6 +122,7 @@ export default {
     return {
       ordersList: [],
       orderOrProduct: '',
+      serverNumber: '',
       nameOrPhone: '',
       time: '',
       pageSize: 2,
@@ -198,6 +199,9 @@ export default {
         }).catch(function(err) {
           console.log(err)
         })
+    },
+    putChange:function(){
+      this.currentPage=1
     }
   }
 }</script>
