@@ -5,7 +5,7 @@
 
     <el-dialog title="修改商品" :visible.sync="showDialog" v-if="showDialog" center>
      
-        <update :onePid='onePid'></update>
+        <update :onePid='onePid' @LisUpdate="listenUpdate"></update>
 
 </el-dialog>
 
@@ -113,7 +113,7 @@
             <el-table-column prop="productColor" label="颜色" width="50"></el-table-column>
             <el-table-column label="上市日期" width="100">
               <template slot-scope="scope">
-                {{scope.row.marketDate}}
+                {{scope.row.marketDate | Format}}
               </template>
             </el-table-column>
             <el-table-column prop="productMaterials" label="主要材料" width="80"></el-table-column>
@@ -199,6 +199,41 @@ export default {
     };
   },
   methods: {
+    listenUpdate(reVal){
+      if(reVal =="reback"){
+        this.showDialog=false;
+             this.$message({
+                        showClose:true,
+                        duration:1000,
+                         message: '取消操作',
+                         type: 'warning'
+                    });
+      }else if(reVal =="success"){
+         this.showDialog=false;
+                    this.query();
+                    this.$message({
+                        showClose:true,
+                        duration:1000,
+                         message: '修改成功',
+                         type: 'success'
+                    });
+
+      }else{
+                    this.query();
+                    this.$message({
+                        showClose:true,
+                        duration:1000,
+                         message: '修改失败',
+                         type: 'error'
+                    });
+
+      }
+
+
+
+
+
+    },
     query: function(e) {
       if (e != null && e != "") {
         if (e == 1) {
