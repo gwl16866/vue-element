@@ -6,17 +6,17 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-form-item label="输入搜索">
         <el-col :span="30">
-          <el-input v-model="orderOrProduct" placeholder="订单编号/商品货号" />
+          <el-input v-model="orderOrProduct" placeholder="订单编号/商品货号"  @change="putChange" />
         </el-col>
       </el-form-item>
       <el-form-item label="收货人">
         <el-col :span="30">
-          <el-input v-model="nameOrPhone" placeholder="收货人姓名/手机号码" />
+          <el-input v-model="nameOrPhone" placeholder="收货人姓名/手机号码"  @change="putChange" />
         </el-col>
       </el-form-item>
       <el-form-item label="提交时间">
         <el-col :span="11">
-          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" />
+          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"  @change="putChange"/>
         </el-col>
       </el-form-item>
       <el-form-item>
@@ -29,9 +29,17 @@
 
     <el-table :data="ordersList" border style="width: 100%">
       <el-table-column prop="orderNumber" label="订单编号" width="165" />
-      <el-table-column prop="submitDate" label="提交时间" width="165" />
-      <el-table-column prop="account" label="用户账号" width="165" />
-      <el-table-column prop="name" label="收货人" width="165" />
+      <el-table-column prop="submitDate" label="提交时间" width="165">
+        <template slot-scope="scope">
+              {{scope.row.submitDate | dateFormat}}
+            </template>
+      </el-table-column>
+      <el-table-column prop="account" label="收货人昵称/账号" width="165" >
+            <template slot-scope="scope">
+              {{scope.row.name}}({{scope.row.account}})
+            </template>
+      </el-table-column>
+      <el-table-column prop="phoneNo" label="收货人手机号" width="165" />
       <el-table-column prop="sumMoney" label="订单金额" width="165" />
       <el-table-column label="订单状态" width="165">
         <template slot-scope="scope">
@@ -41,7 +49,11 @@
         </template>
       </el-table-column>
       <el-table-column prop="autoReceiveTime" label="自动确认收货时间" width="165" />
-      <el-table-column prop="maybeReceiveTime" label="订单应收时间" width="165" />
+      <el-table-column prop="maybeReceiveTime" label="订单应收时间" width="165">
+          <template slot-scope="scope">
+              {{scope.row.maybeReceiveTime | dateFormat}}
+            </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="176">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="look(scope.row)">查看订单</el-button>
@@ -91,6 +103,14 @@
         商品规格：<el-input v-model="productModel" readonly style="width: 160px;" />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         商品颜色：<el-input v-model="productColor" readonly style="width: 160px;" /></p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-button type="primary" @click="dialogVisible=false">关闭</el-button>
     </el-dialog>
   </div>
@@ -102,6 +122,7 @@ export default {
     return {
       ordersList: [],
       orderOrProduct: '',
+      serverNumber: '',
       nameOrPhone: '',
       time: '',
       pageSize: 2,
@@ -178,6 +199,9 @@ export default {
         }).catch(function(err) {
           console.log(err)
         })
+    },
+    putChange:function(){
+      this.currentPage=1
     }
   }
 }</script>

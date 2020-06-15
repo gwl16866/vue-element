@@ -2,8 +2,16 @@
 <div id="app">
 
 
-<el-dialog title="添加类别" :visible.sync="showAdd" v-if="showAdd">
-<add></add>
+<el-dialog title="添加类别" :visible.sync="showAdd" v-if="showAdd" center width="25%">
+           <add @add="listenAdd"></add>
+</el-dialog>
+
+<el-dialog title="规格列表" :visible.sync="showModel" v-if="showModel" center width="50%">
+           <modelList :fid='fid'></modelList>
+</el-dialog>
+
+<el-dialog title="颜色列表" :visible.sync="showColor" v-if="showColor" center width="50%">
+           <colorList :fid='fid'></colorList>
 </el-dialog>
 
 
@@ -12,7 +20,7 @@
     <el-form :inline="true" class="demo-form-inline">
 
   <el-form-item label="商品分类">
-     <el-select v-model="classId" filterable placeholder="请选择">
+     <el-select v-model="classId" filterable placeholder="请选择" @change="selectChange">
                                                 <el-option
                                                         v-for="item in classes"
                                                         :key="item.id"
@@ -31,7 +39,7 @@
 </el-form>
 
 <el-button-group>
-  <el-button type="primary" size="small" @click="addClass()">批量上架</el-button>
+  <el-button type="primary" size="small" @click="addClass()">添加类别</el-button>
  
 </el-button-group>
 
@@ -55,9 +63,9 @@
 
          <el-table-column label="操作" width="400">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.row)">规格</el-button>
+          <el-button size="mini" type="primary" @click="modelButton(scope.row)">规格</el-button>
 
-          <el-button size="mini" type="primary" @click="handleDelete(scope.row)">颜色</el-button>
+          <el-button size="mini" type="primary" @click="colorButton(scope.row)">颜色</el-button>
         </template>
       </el-table-column>
 
@@ -85,11 +93,12 @@
 
 <script>
 import add from '@/views/components/product/productModel/first/add.vue'
-
+import modelList from '@/views/components/product/productModel/first/modelList.vue'
+import colorList from '@/views/components/product/productModel/first/colorList.vue'
 
 export default {
       components:{
-        add
+        add,modelList,colorList
     },
      data(){
 
@@ -100,13 +109,20 @@ export default {
           currentPage: 1,
           totalSize: 0,
           classId:"",
-          showAdd:false
+          showAdd:false,
+          showModel:false,
+          showColor:"",
+          fid:""
             
 
         }
     },
     methods:{
       query(){
+             //模糊查询 当前页设置为第一页
+     if(this.classId != "" ){
+        this.currentPage=1;
+     }
       const that = this;
         this.$axios.get("http://localhost:8081/product/queryClassesTable", {
           params: {
@@ -130,6 +146,9 @@ export default {
       this.pageSize = size;
       this.currentPage = 1;
       this.query();
+      },selectChange(){
+         //模糊查询 当前页设置为第一页
+             this.currentPage=1;
       },
 
       currentChange(page) {
@@ -205,10 +224,48 @@ export default {
     },addClass(){
       this.showAdd=true;
 
+    },listenAdd(reVal){
+      if(reVal =="reback"){
+        this.showAdd=false;
+             this.$message({
+                        showClose:true,
+                        duration:1000,
+                         message: '取消操作',
+                         type: 'warning'
+                    });
+      }else if(reVal =="success"){
+         this.showAdd=false;
+                    this.query();
+                    this.$message({
+                        showClose:true,
+                        duration:1000,
+                         message: '添加成功',
+                         type: 'success'
+                    });
+
+      }else{
+                    this.query();
+                    this.$message({
+                        showClose:true,
+                        duration:1000,
+                         message: '添加失败',
+                         type: 'error'
+                    });
+
+      }
+
+    },modelButton(e){
+      this.showModel=true;
+      this.fid=e.id;
+
+
+
+    },colorButton(e){
+       this.showColor=true;
+       this.fid=e.id;
+
+
     }
-
-   
-
 
     },
     mounted(){

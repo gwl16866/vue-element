@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import addSeckillProduct from '@/views/components/run/addSeckillProduct.vue'
 
 /* Router Modules */
 /*  import componentsRouter from './modules/components'
@@ -82,8 +83,12 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
+  },
+  {
+    path: '/run',
+    name: 'addSeckillProduct',
+    component: addSeckillProduct
   }
-
 ]
 
 /**
@@ -310,6 +315,29 @@ export const asyncRoutes = [
         meta: {
           title: '交易统计'
           // if do not set roles, means: this page does not require permission
+        }
+      }
+    ]
+  },
+  {
+    path: '/components6',
+    component: Layout,
+    redirect: '/components/run',
+    alwaysShow: true, // will always show the root menu
+    name: 'run',
+    meta: {
+      title: '运营',
+      icon: 'lock',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'seckill',
+        component: () => import('@/views/components/run/seckill'),
+        name: 'seckill',
+        meta: {
+          title: '秒杀活动',
+          roles: ['admin'] // or you can only set roles in sub nav
         }
       }
     ]
