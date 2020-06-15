@@ -39,6 +39,7 @@ Vue.prototype.$axios=axios;
 Vue.filter('dateFormat', function (dateStr,pattern = "YYYY-MM-DD HH:mm:ss") {
   return moment(dateStr).format(pattern);
 })
+
 Vue.filter('Format', function (dateStr,pattern = "YYYY-MM-DD") {
   return moment(dateStr).format(pattern);
 })
