@@ -20,7 +20,7 @@
     <el-form :inline="true" class="demo-form-inline">
 
   <el-form-item label="商品分类">
-     <el-select v-model="classId" filterable placeholder="请选择">
+     <el-select v-model="classId" filterable placeholder="请选择" @change="selectChange">
                                                 <el-option
                                                         v-for="item in classes"
                                                         :key="item.id"
@@ -120,7 +120,7 @@ export default {
     methods:{
       query(){
              //模糊查询 当前页设置为第一页
-     if(this.classId != null || this.product.classId != "" ){
+     if(this.classId != "" ){
         this.currentPage=1;
      }
       const that = this;
@@ -146,6 +146,9 @@ export default {
       this.pageSize = size;
       this.currentPage = 1;
       this.query();
+      },selectChange(){
+         //模糊查询 当前页设置为第一页
+             this.currentPage=1;
       },
 
       currentChange(page) {

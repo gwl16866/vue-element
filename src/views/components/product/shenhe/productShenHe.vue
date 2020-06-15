@@ -19,10 +19,10 @@
   <el-header>
     <el-form :inline="true" class="demo-form-inline">
   <el-form-item label="输入搜索">
-    <el-input v-model="product.productName" placeholder="名称/商品货号"></el-input>
+    <el-input v-model="product.productName" placeholder="名称/商品货号" @change="inputChange"></el-input>
   </el-form-item>
   <el-form-item label="商品分类">
-     <el-select v-model="product.classes" filterable placeholder="请选择">
+     <el-select v-model="product.classes" filterable placeholder="请选择" @change="selectChange">
                                                 <el-option
                                                         v-for="item in classes"
                                                         :key="item.id"
@@ -57,7 +57,7 @@
       <el-main>
 
 <el-button-group>
-  <el-button type="primary" size="mini" @click="ControlSome('shenhe')" >批量审核</el-button>
+  <el-button type="primary" size="mini" @click="ControlSome('shenhe')" :disabled="shenheBut">批量审核</el-button>
   <el-button type="primary" size="mini" @click="ControlSome('jujue')" >批量拒绝</el-button>
 </el-button-group>
 
@@ -158,7 +158,8 @@ export default {
       showDialog:false,
       open1:false,
       shanchu:"",
-      showStatus:""
+      showStatus:"",
+      shenheBut:false
 
 
     };
@@ -228,24 +229,25 @@ export default {
          this.shenhe=1;
          this.shanchu="";
           this.currentPage=1;
+          this.shenheBut=true;
        }else if(e == 3){
          this.shenhe=2;
           this.shanchu="";
           this.currentPage=1;
+           this.shenheBut=false;
        }else if(e == 4){
           this.shenhe=0;
           this.shanchu="";
           this.currentPage=1;
+           this.shenheBut=false;
        }else if(e == 5){
          this.shenhe="";
           this.shanchu=0;
           this.currentPage=1;
+           this.shenheBut=false;
        }
      }
-          //模糊查询 当前页设置为第一页
-     if(this.product.productName != null || this.product.productName != "" || this.product.classes != null || this.product.classes != ""){
-        this.currentPage=1;
-     }
+
       const that = this;
       this.$axios.get("http://localhost:8081/product/queryProduct", {
           params: {
@@ -269,10 +271,13 @@ export default {
     },showOne(e){
       this.pid = e.pid;
       this.showDialog=true;
-    }
-    
-    
-    ,queryClasses(){
+    },inputChange(){
+         //模糊查询 当前页设置为第一页
+             this.currentPage=1;
+      },selectChange(){
+         //模糊查询 当前页设置为第一页
+             this.currentPage=1;
+      },queryClasses(){
        const that = this;
       this.$axios
         .get("http://localhost:8081/product/queryClasses", {
