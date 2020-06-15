@@ -70,7 +70,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作信息" width="165">
            <template slot-scope="scope">
-              <el-button type="text" size="small" @click="addProduct()">添加商品</el-button>
+              <el-button type="text" size="small" @click="addProduct(scope.row.seckillId)">添加商品</el-button>
               <el-button type="text" size="small" @click="productSeckill(scope.row.seckillId)">商品列表</el-button>
               <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
               <el-button type="text" size="small" @click="del(scope.row.seckillId)">删除</el-button>
@@ -196,7 +196,7 @@
       <el-table-column prop="productColor" label="颜色" width="80"></el-table-column>
       <el-table-column label="操作" width="  80">
         <template slot-scope="scope">
-          <el-button size="mini" type="danger" @click="productUpdate(scope.row,updateProduct=true)">编辑</el-button>
+          <el-button size="mini" type="danger" @click="productUpdate(scope.row,updateProduct=true,dialogProduct=false)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -231,30 +231,30 @@
           </el-form-item></p>
           <p> <el-form-item >
               秒杀价格：<el-input v-model="updateProductList.seckillPrice"   style="width: 160px;" />
-              秒杀数量：<el-input v-model="updateProductList.seckillNumber"   style="width: 160px;"/>
+              秒杀数量：<el-input v-model="updateProductList.seckillNumber"   style="width: 160px;" @input="number"/>
           </el-form-item></p>
           <p> <el-form-item>
               剩余数量：<el-input v-model="updateProductList.residueNumber"   style="width: 160px;"/>
-              限购数量：<el-input v-model="updateProductList.purchaseNumber"   style="width: 160px;"/>
+              限购数量：<el-input v-model="updateProductList.purchaseNumber"   style="width: 160px;"  @input="number"/>
           </el-form-item></p>
-    <el-button size="mini" @click="updatepro(scope.row)">取消</el-button>
-    <el-button size="mini" type="primary" @click="handleDelete(scope.row)">提交</el-button>
+    <el-button size="mini" @click="updateProduct=false">取消</el-button>
+    <el-button size="mini" type="primary" @click="updateProductSubmint(updateProduct=false)">提交</el-button>
     </el-form>
-    </el-dialog>
+</el-dialog>
 
 
 
 
 <el-dialog v-if="dialogVisibleadd" title="添加商品" :visible.sync="dialogVisibleadd">
       <el-form>
-        <el-table :data="allProduct" border style="width: 100%;" @selection-change="handleSelectionChange">
+      <el-table :data="allProduct" border style="width: 100%;" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="40" />
-      <el-table-column prop="productNumber" label="编号" width="90"></el-table-column>
+      <el-table-column prop="pid" label="编号" width="90"></el-table-column>
       <el-table-column prop="productName" label="商品名称" width="80"></el-table-column>
+      <el-table-column prop="productNumber" label="编号" width="90"></el-table-column>
       <el-table-column prop="price" label="价格" width="80"></el-table-column>
       <el-table-column prop="counts" label="库存" width="80"></el-table-column>
-      <el-table-column prop="residueNumber" label="剩余数量" width="80"></el-table-column>
-      <el-table-column prop="purchaseNumber" label="限购数量" width="80"></el-table-column>
+      <el-table-column prop="classes" label="分类" width="80"></el-table-column>
       <el-table-column prop="image" label="图片" width="80">
         <template slot-scope="scope" >
           <el-image
@@ -268,26 +268,30 @@
       <el-table-column prop="productColor" label="颜色" width="80"></el-table-column>
       </el-table>
 
- <el-pagination
-      :current-page="currentPage2"
-      :page-sizes="[4, 6, 8]"
-      :page-size="pageSize2"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="totalSize2"
-      @size-change="sizeChange2"
-      @current-change="currentChange2"
-    ></el-pagination>
+    <el-pagination
+          :current-page="currentPage2"
+          :page-sizes="[4, 6, 8]"
+          :page-size="pageSize2"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalSize2"
+          @size-change="sizeChange2"
+          @current-change="currentChange2"
+        ></el-pagination>
 
-        <el-button @click="dialogVisible=false">取消</el-button>
-        <el-button :plain="true" @click="submitProduct(dialogVisible=false)">提交</el-button>
+        <el-button @click="dialogVisibleadd=false">取消</el-button>
+        <el-button :plain="true" @click="submitProduct()">添加</el-button>
       </el-form>
     </el-dialog>
 
-
+  <el-dialog title="修改书籍" :visible.sync="dialogsubmitProduct" v-if="dialogsubmitProduct" width="60%">
+   <addSeckillProduct :batchList="batchList" :seckillId="seckillId" @back="listener"></addSeckillProduct>
+  </el-dialog>
   </div>
 </template>
 
 <script>
+import addSeckillProduct from '@/views/components/run/addSeckillProduct.vue'
+import qs from 'qs'
 export default {
   data() {
     return {
@@ -305,6 +309,7 @@ export default {
       dialogVisibleadd:false,
       dialogProduct:false,
       updateProduct:false,
+      dialogsubmitProduct:false,
       title:'',
       starTime:'',
       endTime:'',
@@ -315,7 +320,7 @@ export default {
        pageSize1: 4,
       currentPage1: 1,
       totalSize1: 0,
-       pageSize2: 4,
+      pageSize2: 4,
       currentPage2: 1,
       totalSize2: 0,
       updateProductList:{productNumber:'',productName:'',image:'',productModel:'',productColor:'',seckillPrice:'',seckillNumber:'',residueNumber:'',purchaseNumber:''}
@@ -324,6 +329,9 @@ export default {
   mounted() {
     this.selectSeckill()
   },
+   components:{
+      addSeckillProduct
+    },
   methods: {
     selectSeckill: function() {
       var qwe = this
@@ -345,6 +353,7 @@ export default {
           console.log(err)
         })
     },
+    //主页面分页
     sizeChange(size) {
       this.pageSize = size
       this.currentPage = 1
@@ -363,6 +372,16 @@ export default {
     currentChange1(page) {
       this.currentPage1 = page
       this.productSeckill(this.seckillId)
+    },
+    //添加商品列表页数
+    sizeChange2(size) {
+      this.pageSize2 = size
+      this.currentPage2 = 1
+      this.addProduct(this.seckillId)
+    },
+    currentChange2(page) {
+      this.currentPage2 = page
+      this.addProduct(this.seckillId)
     },
     refresh: function() {
       var qwe = this
@@ -567,7 +586,8 @@ export default {
       })
     },
      //查询所有商品
-    addProduct: function() {
+    addProduct: function(e) {
+      this.seckillId=e
       this.dialogVisibleadd=true
       var qwe = this
       this.$axios.get('http://localhost:8081/re/returnthings/allProductList', {
@@ -602,36 +622,13 @@ export default {
           type: 'error'
         })
       } else {
-        const that = this
-          this.$axios.get('http://localhost:8081/re/returnmoney/batch', {
-            params: {
-              batchList: this.batchList
-            },
-            paramsSerializer: params => {
-              return qs.stringify(params, { indices: false })
-            }
-          })
-            .then(function(res = 1) {
-              that.$message({
-                showClose: true,
-                duration: 1000,
-                message: '',
-                type: 'success'
-              })
-            })
-            .catch(function(error) {
-              that.$message({
-                showClose: true,
-                duration: 1000,
-                message: '批量同意失败',
-                type: 'success'
-              })
-              console.log(error)
-            })
+       this.dialogsubmitProduct=true
       }
     },
     //商品列表  编辑
-      productUpdate: function(data,e) {
+      productUpdate: function(data,e,d) {
+        this.updateProductList.pid=data.pid
+        this.updateProductList.seckillId=data.seckillId
       this.updateProductList.productNumber= data.productNumber
       this.updateProductList.seckillPrice = data.seckillPrice
  this.updateProductList.productName = data.productName
@@ -643,5 +640,61 @@ export default {
 this.updateProductList.residueNumber = data.residueNumber
       this.updateProductList.purchaseNumber = data.purchaseNumber
     },
+    //判断数量
+    number() {
+      if(this.updateProductList.seckillNumber>this.updateProductList.counts){
+         this.$message({
+            message: '秒杀数量不能大于商品数量',
+            type: 'error'
+          })
+      }
+      if(this.updateProductList.purchaseNumber>this.updateProductList.seckillNumber){
+         this.$message({
+            message: '限购数量不能大于秒杀数量',
+            type: 'error'
+          })
+      }
+    },
+    //提交商品修改
+     updateProductSubmint: function(e) {
+     if(this.updateProductList.seckillNumber>this.updateProductList.counts){
+         this.$message({
+            message: '秒杀数量不能大于商品数量',
+            type: 'error'
+          })
+      }else if(this.updateProductList.purchaseNumber>this.updateProductList.seckillNumber){
+         this.$message({
+            message: '限购数量不能大于秒杀数量',
+            type: 'error'
+          })
+      }else{
+      const asd = this
+      this.$axios.get('http://localhost:8081/re/returnthings/updateProductSubmint', {
+        params: {
+         seckillPrice:this.updateProductList.seckillPrice,
+         pid:this.updateProductList.pid,
+         seckillNumber:this.updateProductList.seckillNumber,
+         residueNumber:this.updateProductList.residueNumber,
+         purchaseNumber: this.updateProductList.purchaseNumber
+        }
+      })
+        .then(function(res = 1) {
+          asd.productSeckill(asd.updateProductList.seckillId)
+          asd.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+        }).catch(function(err) {
+          console.log(err)
+        })
+      }
+    },
+    
+      listener:function(val){
+      if(val=="false"){
+            this.dialogsubmitProduct=false;
+            this.batchList=''
+      }
+    }
   }
 }</script>

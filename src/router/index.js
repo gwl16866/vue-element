@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import addSeckillProduct from '@/views/components/run/addSeckillProduct.vue'
 
 /* Router Modules */
 /*  import componentsRouter from './modules/components'
@@ -82,8 +83,12 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
+  },
+  {
+    path: '/run',
+    name: 'addSeckillProduct',
+    component: addSeckillProduct
   }
-
 ]
 
 /**
