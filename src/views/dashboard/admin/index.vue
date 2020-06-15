@@ -4,11 +4,11 @@
 
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+   <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
     </el-row>
 
-    <el-row :gutter="32">
+  <!--    <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
           <raddar-chart />
@@ -36,12 +36,12 @@
       <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
         <box-card />
       </el-col>
-    </el-row>
-  </div>
+    </el-row>-->
+  </div> 
 </template>
 
 <script>
-import GithubCorner from '@/components/GithubCorner'
+ import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
 import RaddarChart from './components/RaddarChart'
@@ -49,26 +49,28 @@ import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 import TransactionTable from './components/TransactionTable'
 import TodoList from './components/TodoList'
-import BoxCard from './components/BoxCard'
+import BoxCard from './components/BoxCard' 
 
-const lineChartData = {
+ const lineChartData = {
   newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
+    peoples: [],
+    message: [],
+    money: [],
+    shopping: [],
   },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
+ /*  message: {
+    expectedData: [],
+    actualData: []
   },
-  purchases: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
+  money: {
+    expectedData: [],
+    actualData: []
   },
-  shoppings: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
+  shopping: {
+    expectedData: [],
+    actualData: []
+  }  */
+} 
 
 export default {
   name: 'DashboardAdmin',
@@ -85,13 +87,83 @@ export default {
   },
   data() {
     return {
-      lineChartData: lineChartData.newVisitis
+      lineChartData: lineChartData.newVisitis,
     }
   },
+   mounted() {
+    this.loadDate()
+    },
   methods: {
-    handleSetLineChartData(type) {
+   handleSetLineChartData(type) {
       this.lineChartData = lineChartData[type]
-    }
+    },
+     loadDate() {
+      this.$axios({
+            type:"post",
+            url:"http://localhost:8081/system/user/selectFour",
+            contentType:"application/json",
+            success:function (data) {
+      option = {
+          title: {
+              text: '折线图堆叠'
+          },
+          tooltip: {
+              trigger: 'axis'
+          },
+          legend: {
+              data: ['用户人数', '退款信息条数', '销售总额', '订单总数']
+          },
+          grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+          },
+          toolbox: {
+              feature: {
+                  saveAsImage: {}
+              }
+          },
+          xAxis: {
+              type: 'category',
+              boundaryGap: false,
+              data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+          },
+          yAxis: {
+              type: 'value'
+          },
+          series: [
+              {
+                  name: '用户人数',
+                  type: 'line',
+                  stack: '总量',
+                  data:data.peoples
+              },
+              {
+                  name: '退款信息条数',
+                  type: 'line',
+                  stack: '总量',
+                  data: data.message
+              },
+              {
+                  name: '销售总额',
+                  type: 'line',
+                  stack: '总量',
+                  data: data.money
+              },
+              {
+                  name: '订单总数',
+                  type: 'line',
+                  stack: '总量',
+                  data:date.shopping
+              },
+            
+          ]
+      }
+       lineChartData.setOption(option);
+            }
+        })
+     }
   }
 }
 </script>

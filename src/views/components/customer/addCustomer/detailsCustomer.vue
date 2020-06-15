@@ -392,7 +392,7 @@ export default {
       },
       pagesize: 10,
       currpage: 1,
-      tableData: [],
+      tableData:[],
       tableData1: [],
       tableData2: []
 
