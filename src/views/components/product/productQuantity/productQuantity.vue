@@ -57,9 +57,9 @@
       </el-table-column>
       <el-table-column label="库存" width="165">
         <template slot-scope="scope">
-          数量: <span v-if="scope.row.controlClass=='3'">-{{ scope.row.counts }}</span>
-          <span v-else-if="scope.row.controlClass=='4'">-{{ scope.row.counts }}</span>
-          <span v-else>+{{ scope.row.counts }}</span>
+          数量: <span v-if="scope.row.controlClass=='3'">-{{ scope.row.ocounts }}</span>
+          <span v-else-if="scope.row.controlClass=='4'">-{{ scope.row.ocounts }}</span>
+          <span v-else>+{{ scope.row.ocounts }}</span>
           <p>剩余:<span>{{ scope.row.count }}</span></p>
         </template>
       </el-table-column>

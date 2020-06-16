@@ -79,7 +79,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         订单金额：<el-input v-model="sumMoney" readonly style="width: 160px;" /></p>
       <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        订单数量：<el-input v-model="counts" readonly style="width: 160px;" />
+        订单数量：<el-input v-model="ocounts" readonly style="width: 160px;" />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         订单状态：<span v-if="status=='1'">已发货</span><span v-else-if="status=='2'">已完成</span><span v-else>已关闭</span>
         <el-divider content-position="left">用户信息</el-divider>
@@ -176,7 +176,7 @@ export default {
       this.dialogVisible = true
       this.orderNumber = e.orderNumber
       this.sumMoney = e.sumMoney
-      this.counts = e.counts
+      this.ocounts = e.ocounts
       this.status = e.status
       this.account = e.account
       this.cname = e.cname
