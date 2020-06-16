@@ -15,6 +15,7 @@
             <el-option label="退货时" value="1" />
             <el-option label="添加商品" value="2" />
             <el-option label="订单发货时" value="3" />
+            <el-option label="减少商品" value="4" />
           </el-select>
         </el-col>
       </el-form-item>
@@ -57,7 +58,7 @@
       <el-table-column label="库存" width="165">
         <template slot-scope="scope">
           数量: <span v-if="scope.row.controlClass=='3'">-{{ scope.row.counts }}</span>
-          <span v-if="scope.row.controlClass=='4'">-{{ scope.row.counts }}</span>
+          <span v-else-if="scope.row.controlClass=='4'">-{{ scope.row.counts }}</span>
           <span v-else>+{{ scope.row.counts }}</span>
           <p>剩余:<span>{{ scope.row.count }}</span></p>
         </template>
@@ -72,8 +73,8 @@
         <template slot-scope="scope">
           <p v-if="scope.row.controlClass=='1'">退货时</p>
           <p v-else-if="scope.row.controlClass=='2'">添加商品</p>
+          <p v-else-if="scope.row.controlClass=='3'">订单发货时</p>
            <p v-else-if="scope.row.controlClass=='4'">减少商品</p>
-          <p v-else>订单发货时</p>
         </template>
       </el-table-column>
       <el-table-column label="操作信息" width="165">
