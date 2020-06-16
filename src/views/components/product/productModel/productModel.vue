@@ -63,9 +63,9 @@
 
          <el-table-column label="操作" width="400">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="modelButton(scope.row)">规格</el-button>
+          <el-button size="mini" :disabled="scope.row.status ==2" type="primary" @click="modelButton(scope.row)">规格</el-button>
 
-          <el-button size="mini" type="primary" @click="colorButton(scope.row)">颜色</el-button>
+          <el-button size="mini" :disabled="scope.row.status ==2" type="primary" @click="colorButton(scope.row)">颜色</el-button>
         </template>
       </el-table-column>
 

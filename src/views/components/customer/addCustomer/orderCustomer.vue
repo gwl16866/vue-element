@@ -136,7 +136,7 @@ data() {
   }
 },
 mounted() {
-  this.loadDate()
+  this.loadDate(id)
 },
 methods: {
   loadDate(id) {
