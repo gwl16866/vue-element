@@ -1,5 +1,96 @@
 <template>
 <div id="app">
+
+
+  <el-dialog title="修改用户信息" v-if="isform" :visible.sync="isform" center>
+<el-form
+      v-show="isform"
+      ref="form"
+      :model="user"
+      :inline="true"
+    >
+      <el-form-item label="用户ID:">
+        <el-input v-model="user.uid" disabled/>
+      </el-form-item>
+      <el-form-item label="用户姓名:">
+        <el-input v-model="user.userName" />
+      </el-form-item>
+
+      <el-form-item label="角色:">
+
+         <el-select v-model="haveRoles" multiple placeholder="请选择">
+    <el-option
+      v-for="item in roles"
+      :key="item.rid"
+      :label="item.roleName"
+      :value="item.rid">
+    </el-option>
+  </el-select>
+
+
+      </el-form-item>
+
+
+      <el-form-item label="用户密码:">
+        <el-input v-model="user.password" />
+      </el-form-item>
+      <br>
+ 
+      <el-form-item label="手机号:">
+        <el-input v-model="user.phoneNo" />
+      </el-form-item>
+      <el-form-item label="邮箱:">
+        <el-input v-model="user.email" />
+      </el-form-item>
+
+     <el-form-item label="性别:">
+        <el-radio
+          v-model="user.sex"
+          :label='1'
+        >
+          男
+        </el-radio>
+        <el-radio
+          v-model="user.sex"
+          :label='2'
+        >
+          女
+        </el-radio>
+      </el-form-item>
+      <br>
+      <br>
+      <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;
+      <el-form-item>
+         <el-button
+          type="danger"
+          @click="reback()"
+        >
+          取消
+        </el-button>
+
+        <el-button
+          type="primary"
+          @click="onbutton()"
+        >
+          修改
+        </el-button>
+      </el-form-item>
+    </el-form>
+
+
+</el-dialog>
+
+
+
  <el-table
       v-show="istable"
       :data="tableData"
@@ -14,55 +105,55 @@
       <el-table-column
         prop="uid"
         label="用户ID"
-        width="220"
+        width="150"
       />
       <el-table-column
         prop="userName"
         label="用户名"
-        width="220"
+        width="150"
       />
       <el-table-column
         prop="password"
         label="用户密码"
-        width="220"
+        width="150"
       />
       <el-table-column
         prop="sex"
         label="性别"
-        width="220"
+        width="150"
         :formatter="formatStatus"
       />
       <el-table-column
         prop="phoneNo"
         label="手机号"
-        width="220"
+        width="150"
       />
       <el-table-column
         prop="email"
         label="邮箱"
-        width="220"
+        width="150"
       />
       <el-table-column
         label="操作"
-        width="220"
       >
         <template slot-scope="scope">
           <el-button
-            type="text"
-            size="small"
+            type="primary"
+            size="mini"
             @click="upd(scope.row)"
           >
             编辑
           </el-button>
-          ||    <el-button
-            type="text"
-            size="small"
+              <el-button
+            type="danger"
+            size="mini"
             @click="del(scope.row,scope.row)"
           >
             删除
           </el-button>
-        ||  <el-button
-            type="text"
+          <el-button
+            type="primary"
+            size="mini"
             @click="add(scope.row)"
           >
             添加用户
@@ -71,51 +162,8 @@
       </el-table-column>
     </el-table>
 
- <el-form
-      v-show="isform"
-      ref="form"
-      :model="user"
-      label-width="80px"
-    >
-      <el-form-item label="用户ID">
-        <el-input v-model="user.uid" />
-      </el-form-item>
-      <el-form-item label="用户姓名">
-        <el-input v-model="user.userName" />
-      </el-form-item>
-      <el-form-item label="用户密码">
-        <el-input v-model="user.password" />
-      </el-form-item>
-      <el-form-item label="性别">
-       <!--  <el-input v-model="user.sex" /> -->
-        <el-radio
-          v-model="user.sex"
-          label="1"
-        >
-          男
-        </el-radio>
-        <el-radio
-          v-model="user.sex"
-          label="2"
-        >
-          女
-        </el-radio>
-      </el-form-item>
-      <el-form-item label="手机号">
-        <el-input v-model="user.phoneNo" />
-      </el-form-item>
-      <el-form-item label="邮箱">
-        <el-input v-model="user.email" />
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          @click="onbutton()"
-        >
-          创建
-        </el-button>
-      </el-form-item>
-    </el-form>
+
+ 
 
 
 <el-dialog title="添加用户" :visible.sync="addUser">
@@ -158,6 +206,8 @@
 </template>
 
 <script>
+import qs from "qs";
+
 export default {
      data(){
         return{
@@ -173,11 +223,14 @@ export default {
             email:''
          },
          addUser:false,
-         tableData: []
+         tableData: [],
+         roles:[],
+         haveRoles:[]
         }
     },
     mounted() {
     this.loadDate()
+    this.queryRoles()
     },
     methods:{
      loadDate() {
@@ -195,9 +248,21 @@ export default {
     },
      upd(row) {
       this.user = row
-      this.istable = false
+      var that = this
+      this.$axios.get('http://localhost:8081/role/queryRolesById', {
+        params: {
+          uid: row.uid
+        }
+
+      })
+        .then(function(response) {
+          that.haveRoles=[]
+           that.haveRoles=response.data;
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
       this.isform = true
-      console.log(row)
     },
     onbutton() {
       var a = this
@@ -208,13 +273,15 @@ export default {
           password: a.user.password,
           sex: a.user.sex,
           phoneNo: a.user.phoneNo,
-          email: a.user.email
-        }
+          email: a.user.email,
+          haveRoles:a.haveRoles
+        },paramsSerializer: params => {
+          return qs.stringify(params, { indices: false });
+          }
 
       })
         .then(function(response) {
           a.isform = false
-          a.istable = true
           a.loadDate()
         })
         .catch(function(error) {
@@ -222,7 +289,14 @@ export default {
         })
     },
     del: function(c, a) {
-        var a = this
+
+       this.$confirm("确定删除?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+                 var a = this
       this.$axios.get('http://localhost:8081/system/user/del', {
         params: {
           uid: c.uid
@@ -230,10 +304,30 @@ export default {
       })
         .then(function(response) {
           a.loadDate()
+                   a.$message({
+                  showClose: true,
+                  duration: 1000,
+                  message: "删除成功",
+                  type: "success"
+                });
         })
         .catch(function(error) {
           console.log(error)
         })
+
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            showClose: true,
+            duration: 1000,
+            message: "已取消删除"
+          });
+        });
+
+
+
+ 
     },
     add(){
 				this.addUser=true;
@@ -257,7 +351,21 @@ export default {
 					that.addUser=false;
 					that.loadDate();
 				});
-			},
+			},queryRoles(){
+         var that = this
+      this.$axios.get('http://localhost:8081/role/queryGoodRoles', )
+        .then(function(res) {
+         that.roles=res.data;
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
+        
+        
+        
+        },reback(){
+          this.isform=false;
+        }
 
 
     }

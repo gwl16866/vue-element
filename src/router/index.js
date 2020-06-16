@@ -251,20 +251,11 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'customerList',
-        component: () => import('@/views/components/customer/customerList/customer'),
-        name: 'customerList',
-        meta: {
-          title: '订单列表',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
         path: 'customerAdd',
         component: () => import('@/views/components/customer/addCustomer/add'),
         name: 'customerAdd',
         meta: {
-          title: '添加客户'
+          title: '客户管理'
           // if do not set roles, means: this page does not require permission
         }
       }

@@ -519,6 +519,7 @@ export default {
               });
             });
         } else if (e == "xiajia") {
+          const that=this;
           this.$axios
             .get("http://localhost:8081/product/controlSome", {
               params: {
@@ -551,6 +552,7 @@ export default {
               console.log(error);
             });
         } else if (e == "del") {
+          const that=this;
           this.$axios
             .get("http://localhost:8081/product/controlSome", {
               params: {
