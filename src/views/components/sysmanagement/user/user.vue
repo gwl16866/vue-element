@@ -3,12 +3,12 @@
 <el-form label-width="“150px”" :inline="true"  :model="user">
       <el-form-item label="用户姓名">
         <el-col :span="30">
-          <el-input   v-model="user.userName" placeholder="用户姓名"/>
+          <el-input   v-model="userName" placeholder="用户姓名"/>
         </el-col>
       </el-form-item>
       <el-form-item label="手机号">
         <el-col :span="30">
-          <el-input v-model="user.phoneNo" placeholder="手机号" />
+          <el-input v-model="phoneNo" placeholder="手机号" />
         </el-col>
       </el-form-item>
       <el-form-item>
@@ -242,6 +242,8 @@ export default {
             isform: false,
             istable: true,
             checked: true,
+            userName:"",
+            phoneNo:"",
          user:{
             uid:'',
             userName:'',
@@ -250,7 +252,7 @@ export default {
             phoneNo:'',
             email:''
          },
-          pagesize: 10,
+          pagesize: 2,
           currpage: 1,
          addUser:false,
          tableData: [],
@@ -409,8 +411,8 @@ export default {
       const a = this
         this.$axios.get('http://localhost:8081/system/user/listselect', {
           params: {
-            userName: a.user.userName,
-            phoneNo: a.user.phoneNo,
+            userName: a.userName,
+            phoneNo: a.phoneNo,
            
           }
 
