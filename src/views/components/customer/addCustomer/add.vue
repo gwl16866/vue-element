@@ -7,7 +7,7 @@
       title="查看详情"
       :visible.sync="show"
     >
-      <detailsCustomer :id="id" />
+      <detailsCustomer :id="fid" />
       <span
         slot="footer"
         class="dialog-footer"
@@ -16,44 +16,36 @@
       </span>
     </el-dialog>
 
-    <div
-      id="u5783"
-      class="ax_default _默认样式"
-      title="刷新"
-    >
-      <div
-        id="u5783_div"
-        class=""
-      />
-      <div
-        id="u5783_text"
-        class="text "
-      >
-        <p><span>刷新</span></p>
-      </div>
-    </div>
-    <el-form
-      :model="stu"
-      label-width="80px"
-    >
+<el-form label-width="“150px”" :inline="true"  :model="stu">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-form-item label="用户账号">
-        <el-input v-model="stu.account" />
+        <el-col :span="30">
+          <el-input   v-model="stu.account" placeholder="用户账号"/>
+        </el-col>
       </el-form-item>
       <el-form-item label="用户昵称">
-        <el-input v-model="stu.name" />
+        <el-col :span="30">
+          <el-input v-model="stu.name" placeholder="用户昵称" />
+        </el-col>
       </el-form-item>
-      <el-form-item label="订单数量">
-        <el-input v-model="stu.orderCounts" />
+        <el-form-item label="订单数量">
+        <el-col :span="30">
+          <el-input v-model="stu.orderCounts" placeholder="订单数量" />
+        </el-col>
       </el-form-item>
       <el-form-item>
-        <el-button
+         <el-button
           type="primary"
           @click="somebutton()"
         >
           模糊查询
         </el-button>
-      </el-form-item>
+    </el-form-item>
     </el-form>
+
+
 
     <el-table
       v-show="istable"
@@ -175,7 +167,7 @@
           type="primary"
           @click="onbutton()"
         >
-          创建
+          修改
         </el-button>
       </el-form-item>
     </el-form>
@@ -183,7 +175,7 @@
     <el-pagination
       background
       layout="prev, pager, next, sizes, total, jumper"
-      :page-sizes="[5, 10, 15, 20]"
+      :page-sizes="[2, 4, 5, 6]"
       :page-size="pagesize"
       :total="tableData.length"
       @current-change="handleCurrentChange"
@@ -206,7 +198,7 @@ export default {
       istable: true,
       checked: true,
       show: false,
-      id: '',
+      fid: '',
       stu: {
         id: '',
         account: '',
@@ -227,8 +219,8 @@ export default {
   },
   methods: {
     sel(e) {
-      this.show = true
-      this.id = e.id
+      this.show = true,
+      this.fid = e.id
     },
     loadDate() {
       var a = this

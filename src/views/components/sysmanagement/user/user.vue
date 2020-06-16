@@ -1,6 +1,25 @@
 <template>
 <div id="app">
-
+<el-form label-width="“150px”" :inline="true"  :model="user">
+      <el-form-item label="用户姓名">
+        <el-col :span="30">
+          <el-input   v-model="user.userName" placeholder="用户姓名"/>
+        </el-col>
+      </el-form-item>
+      <el-form-item label="手机号">
+        <el-col :span="30">
+          <el-input v-model="user.phoneNo" placeholder="手机号" />
+        </el-col>
+      </el-form-item>
+      <el-form-item>
+         <el-button
+          type="primary"
+          @click="somebutton()"
+        >
+          模糊查询
+        </el-button>
+    </el-form-item>
+    </el-form>
 
   <el-dialog title="修改用户信息" v-if="isform" :visible.sync="isform" center>
 <el-form
@@ -93,9 +112,10 @@
 
  <el-table
       v-show="istable"
-      :data="tableData"
+       :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
       border
       style="width: 100%"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column
         type="selection"
@@ -162,7 +182,15 @@
       </el-table-column>
     </el-table>
 
-
+<el-pagination
+      background
+      layout="prev, pager, next, sizes, total, jumper"
+      :page-sizes="[2, 4, 5, 6]"
+      :page-size="pagesize"
+      :total="tableData.length"
+      @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+    />
  
 
 
@@ -222,6 +250,8 @@ export default {
             phoneNo:'',
             email:''
          },
+          pagesize: 10,
+          currpage: 1,
          addUser:false,
          tableData: [],
          roles:[],
@@ -233,6 +263,15 @@ export default {
     this.queryRoles()
     },
     methods:{
+      handleCurrentChange(cpage) {
+      this.currpage = cpage
+    },
+    handleSizeChange(psize) {
+      this.pagesize = psize
+    },
+    handleSelectionChange(val) {
+      // this.tableData = res.data
+    },
      loadDate() {
       var a = this
       this.$axios.get('http://localhost:8081/system/user/listselect')
@@ -365,7 +404,24 @@ export default {
         
         },reback(){
           this.isform=false;
-        }
+        },
+    somebutton() {
+      const a = this
+        this.$axios.get('http://localhost:8081/system/user/listselect', {
+          params: {
+            userName: a.user.userName,
+            phoneNo: a.user.phoneNo,
+           
+          }
+
+        })
+          .then(res => {
+            a.tableData = res.data
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    }
 
 
     }
