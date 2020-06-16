@@ -25,6 +25,7 @@
 
 
 
+
 <el-dialog title="修改" :visible.sync="showUpdate" v-if="showUpdate" center width="25%">
    <el-form >
         <el-form-item label="角色名称:">
@@ -37,6 +38,38 @@
             <el-button type="primary" @click="addUpdate()">确 定</el-button>
    </el-form>
 </el-dialog>
+
+
+<el-dialog title="设置权限" :visible.sync="setPermsDialog" v-if="setPermsDialog" center width="35%">
+
+   <div slot="title" class="header-title">
+            <span> {{ diaName }}</span>
+        </div>
+
+<el-tree
+  :data="allRoles"
+  show-checkbox
+  accordion
+  node-key="pid"
+  ref="tree"
+  highlight-current
+  :default-checked-keys="haveRoles"
+  :props="defaultProps">
+</el-tree>
+<br><br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<el-button @click="rebackTree()" type="danger">取消</el-button>
+<el-button @click="addRoles()" type="primary">确定</el-button>
+
+
+
+</el-dialog>
+
+
 
 
 
@@ -79,7 +112,8 @@
 
          <el-table-column label="操作" width="400">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="modelButton(scope.row)">修改</el-button>
+          <el-button size="mini" :disabled="scope.row.status ==2" type="primary" @click="modelButton(scope.row)">修改</el-button>
+           <el-button size="mini" :disabled="scope.row.status ==2" type="primary" @click="setPerms(scope.row)">设置权限</el-button>
 
         </template>
       </el-table-column>
@@ -107,7 +141,7 @@
 </template>
 
 <script>
-
+import qs from "qs";
 
 export default {
 
@@ -128,10 +162,68 @@ export default {
                         ]
 
                  }
+         ,setPermsDialog:false,
+         allRoles:[],
+         haveRoles:[],
+         defaultProps: {
+          children: 'rolesList',
+          label: 'permissionName'
+        },
+        diaName:"",
+        diaRoleId:"",
+        havePerms:[]
 
         }
     },
     methods:{
+
+       addRoles() {
+         //已选权限
+         this.havePerms = this.$refs.tree.getCheckedKeys();
+            const that = this;
+        this.$axios.get("http://localhost:8081/role/deleteRolePermsByRid", {
+          params: {
+            havePerms: that.havePerms,
+            rid: that.diaRoleId
+          },
+              paramsSerializer: params => {
+                return qs.stringify(params, { indices: false });
+              }
+        })
+        .then(function(res) {
+          if(res.data ==1){
+               that.$message({
+                  showClose: true,
+                  duration: 1000,
+                  message: "修改成功",
+                  type: "success"
+                });
+                that.setPermsDialog=false;
+                that.query();
+
+          }else{
+               that.$message({
+                  showClose: true,
+                  duration: 1000,
+                  message: "修改失败",
+                  type: "success"
+                });
+
+
+          }
+
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+      },
+      
+      
+      rebackTree(){
+        this.setPermsDialog=false;
+      },
+      
       query(){
              //模糊查询 当前页设置为第一页
      if(this.name != "" ){
@@ -235,6 +327,23 @@ export default {
       this.showUpdate=true;
       this.role.rid=e.rid;
       this.role.roleName=e.roleName;
+    },setPerms(e){
+      this.setPermsDialog=true;
+      this.diaName=e.roleName
+      this.diaRoleId=e.rid
+      const that =this;
+       this.$axios.get('http://localhost:8081/role/queryRolePerms',{ 
+                       params:{
+                          rid:e.rid
+                       }
+                }).then(function(res){
+                  that.allRoles=res.data.allPerms;
+                  that.haveRoles=res.data.havePerms;
+                  
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
     },addRole(){
         this.role.roleName="";
         this.showAdd=true;

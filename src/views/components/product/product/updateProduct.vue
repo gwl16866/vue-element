@@ -46,7 +46,7 @@
 </el-form-item>
 
 
-    <el-form-item label="适用者:" prop="productUser">
+    <el-form-item label="人群:" prop="productUser">
        <el-input v-model="product.productUser"  style="width: 160px;" />
     </el-form-item>
 
