@@ -34,12 +34,12 @@
               {{scope.row.submitDate | dateFormat}}
             </template>
       </el-table-column>
-      <el-table-column prop="account" label="收货人昵称/账号" width="165" >
+      <el-table-column prop="account" label="收货人姓名/账号" width="165" >
             <template slot-scope="scope">
-              {{scope.row.name}}({{scope.row.account}})
+              {{scope.row.cname}}({{scope.row.account}})
             </template>
       </el-table-column>
-      <el-table-column prop="phoneNo" label="收货人手机号" width="165" />
+      <el-table-column prop="cphone" label="收货人手机号" width="165" />
       <el-table-column prop="sumMoney" label="订单金额" width="165" />
       <el-table-column label="订单状态" width="165">
         <template slot-scope="scope">
@@ -57,6 +57,7 @@
       <el-table-column fixed="right" label="操作" width="176">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="look(scope.row)">查看订单</el-button>
+          <el-button type="text" size="small" @click="updateto(scope.row)">修改信息</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -85,11 +86,11 @@
       </p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         用户账号：<el-input v-model="account" readonly style="width: 160px;" />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        用户昵称：<el-input v-model="name" readonly style="width: 160px;" /></p>
+        用户昵称：<el-input v-model="cname" readonly style="width: 160px;" /></p>
       <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        手&nbsp;&nbsp;机&nbsp;&nbsp;号：<el-input v-model="phoneNo" readonly style="width: 160px;" />
+        手&nbsp;&nbsp;机&nbsp;&nbsp;号：<el-input v-model="cphone" readonly style="width: 160px;" />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        收货地址：<el-input v-model="aname" readonly style="width: 160px;" /></p>
+        收货地址：<el-input v-model="caddress" readonly style="width: 160px;" /></p>
       <el-divider content-position="left">商品信息</el-divider>
       <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         商品名称：<el-input v-model="productName" readonly style="width: 160px;" />
@@ -113,6 +114,18 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-button type="primary" @click="dialogVisible=false">关闭</el-button>
     </el-dialog>
+
+
+
+
+    
+    <el-dialog v-if="dialogVisibleupdate" title="修改信息" :visible.sync="dialogVisibleupdate" width="30%">
+     用户昵称：<el-input v-model="cname"  style="width: 200px;" /><br><br>
+     手&nbsp;&nbsp;机&nbsp;&nbsp;号：<el-input v-model="cphone"  style="width: 200px;" /><br><br>
+     收货地址：<el-input v-model="caddress"  style="width: 200px;" /><br><br>
+      <el-button type="primary" @click="dialogVisibleupdate=false">关闭</el-button>
+      <el-button type="primary" @click="update()">提交</el-button>
+    </el-dialog>
   </div>
 </template>
 
@@ -128,7 +141,12 @@ export default {
       pageSize: 2,
       currentPage: 1,
       totalSize: 0,
-      dialogVisible: false
+      dialogVisible: false,
+      dialogVisibleupdate:false,
+      caddress:'',
+      cname:'',
+      cphone:'',
+      id:''
     }
   },
   mounted() {
@@ -161,9 +179,9 @@ export default {
       this.counts = e.counts
       this.status = e.status
       this.account = e.account
-      this.name = e.name
-      this.phoneNo = e.phoneNo
-      this.aname = e.aname
+      this.cname = e.cname
+      this.cphone = e.cphone
+      this.caddress = e.caddress
       this.productName = e.productName
       this.price = e.price
       this.productNumber = e.productNumber
@@ -202,6 +220,37 @@ export default {
     },
     putChange:function(){
       this.currentPage=1
+    },
+      updateto: function(e) {
+      this.dialogVisibleupdate = true
+      this.cname = e.cname
+      this.cphone = e.cphone
+      this.caddress = e.caddress
+      this.id = e.id
+    },
+     update: function(data) {
+      const that = this
+      that.dialogVisibleupdate=false
+      this.$axios.get('http://localhost:8081/o/orders/updateInfo',{
+      params:{
+         id:this.id,
+      cname:this.cname ,
+      cphone:this.cphone,
+      caddress:this.caddress
+      }})
+        .then(function(res=1) {
+          that.selectOrders()
+          that.$message({
+          message: '修改成功',
+          type: 'success'
+        })
+        }).catch(function(err) {
+          console.log(err)
+           that.$message({
+          message: '修改失败',
+          type: 'error'
+        })
+        })
     }
   }
 }</script>

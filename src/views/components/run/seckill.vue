@@ -31,25 +31,21 @@
       </el-form-item>
     </el-form>
 
+
+
+
+
     <el-table :data="seckillList" border style="width: 100%">
       <el-table-column prop="seckillId" label="编号" width="165" />
       <el-table-column prop="title" label="活动标题" width="165"></el-table-column>
       <el-table-column label="活动状态" width="165">
         <template slot-scope="scope">
-          <span v-if="scope.row.status=='1'">活动进行中</span>
-          <span v-else>活动已结束</span>
+           <span v-show="scope.row.status==1">活动进行中</span>
+           <span v-show="scope.row.status ==2">活动已结束</span>
         </template>
       </el-table-column>
-      <el-table-column  label="开始日期" width="165">
-          <template slot-scope="scope">
-          {{scope.row.starTime | format}}
-      </template>
-      </el-table-column>
-      <el-table-column  label="结束日期" width="165">
-           <template slot-scope="scope">
-          {{scope.row.endTime | format}}
-      </template>
-      </el-table-column>
+      <el-table-column prop="starTime" label="开始日期" width="165"></el-table-column>
+      <el-table-column prop="endTime"  label="结束日期" width="165"></el-table-column>
       <el-table-column label="开始/结束时间" width="165">
       <template slot-scope="scope">
           {{scope.row.seckillStarTime}}-{{scope.row.seckillEndTime}}
@@ -58,19 +54,21 @@
       <el-table-column prop="counts" label="商品数量" width="165"></el-table-column>
       <el-table-column label="上架/下架" width="165">
         <template slot-scope="scope">
-          <el-switch
+           <el-switch
             v-model="scope.row.putOrNot"
             on-color="#00A854"
-            :active-value='1'
+            :active-value=1
             off-color="#F04134"
-            :inactive-value='2'
+            :inactive-value=2
             @change="changeStatus(scope.row)"
           ></el-switch>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作信息" width="165">
            <template slot-scope="scope">
-              <el-button type="text" size="small" @click="addProduct(scope.row.seckillId)">添加商品</el-button>
+              <el-button type="text" size="small" @click="addProduct(scope.row.seckillId)">
+                <span v-show="scope.row.status==1">添加商品</span><span v-show="scope.row.status !=1"> </span>
+              </el-button>
               <el-button type="text" size="small" @click="productSeckill(scope.row.seckillId)">商品列表</el-button>
               <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
               <el-button type="text" size="small" @click="del(scope.row.seckillId)">删除</el-button>
@@ -92,22 +90,22 @@
     <el-dialog v-if="dialogVisible2" title="新增秒杀活动" :visible.sync="dialogVisible2">
       <el-form>
           <el-form-item label="活动标题：">
-              <el-input v-model="seckill.title"  style="width: 300px;" />
+              <el-input v-model="seckill2.title"  style="width: 300px;" />
           </el-form-item>
           <el-form-item label="活动日期：">
            <el-col :span="11">
-                <el-date-picker v-model="seckill.starTime" type="date" placeholder="开始日期" value-format="yyyy-MM-dd"/>
+                <el-date-picker v-model="seckill2.starTime" type="date" placeholder="开始日期" value-format="yyyy-MM-dd"/>
             </el-col>
             <el-col class="line" :span="2">-</el-col>
             <el-col :span="11">
-                <el-date-picker v-model="seckill.endTime" type="date" placeholder="结束日期" value-format="yyyy-MM-dd" />
+                <el-date-picker v-model="seckill2.endTime" type="date" placeholder="结束日期" value-format="yyyy-MM-dd" />
             </el-col>
           </el-form-item>
           <el-form-item label="活动时间：">
               <el-col :span="11">
               <el-time-picker
                 arrow-control
-                v-model="seckill.seckillStarTime"
+                v-model="seckill2.seckillStarTime"
                 :picker-options="{
                 selectableRange: '00:00:00 - 23:59:59'
                 }"
@@ -118,7 +116,7 @@
             <el-col>
             <el-time-picker
                 arrow-control
-                v-model="seckill.seckillEndTime"
+                v-model="seckill2.seckillEndTime"
                 :picker-options="{
                 selectableRange: '00:00:00 - 23:59:59'
                 }"
@@ -138,39 +136,32 @@
               <el-input v-model="seckill.title"  style="width: 300px;" />
           </el-form-item>
           <el-form-item label="活动日期：">
-           <el-col :span="11">
-                <el-date-picker v-model="seckill.starTime" type="date" placeholder="开始日期" value-format="yyyy-MM-dd"/>
-            </el-col>
-            <el-col class="line" :span="2">-</el-col>
-            <el-col :span="11">
-                <el-date-picker v-model="seckill.endTime" type="date" placeholder="结束日期" value-format="yyyy-MM-dd" />
-            </el-col>
+            <el-date-picker  v-model="seckill.starTime" value-format="yyyy-MM-dd" />
+            -
+            <el-date-picker  v-model="seckill.endTime" value-format="yyyy-MM-dd" />
           </el-form-item>
           <el-form-item label="活动时间：">
-              <el-col :span="11">
+             
               <el-time-picker
                 arrow-control
                 v-model="seckill.seckillStarTime"
                 :picker-options="{
                 selectableRange: '00:00:00 - 23:59:59'
                 }"
-                value-format="HH:mm:ss"
-                placeholder="每日开始时间">
-            </el-time-picker></el-col>
-            <el-col class="line" :span="2">-</el-col>
-            <el-col>
+                value-format="HH:mm:ss">
+            </el-time-picker>
+            -
             <el-time-picker
                 arrow-control
                 v-model="seckill.seckillEndTime"
                 :picker-options="{
                 selectableRange: '00:00:00 - 23:59:59'
                 }"
-                value-format="HH:mm:ss"
-                placeholder="每日结束时间">
-            </el-time-picker></el-col>
+                value-format="HH:mm:ss">
+            </el-time-picker>
           </el-form-item>
         <el-button @click="dialogVisible=false">取消</el-button>
-        <el-button :plain="true" @click="submitEdit(dialogVisible=false)">提交</el-button>
+        <el-button :plain="true" type="primary" @click="submitEdit(dialogVisible=false)">提交</el-button>
       </el-form>
     </el-dialog>
 
@@ -197,6 +188,7 @@
       <el-table-column label="操作" width="  80">
         <template slot-scope="scope">
           <el-button size="mini" type="danger" @click="productUpdate(scope.row,updateProduct=true,dialogProduct=false)">编辑</el-button>
+          <br>
           <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -278,7 +270,7 @@
           @current-change="currentChange2"
         ></el-pagination>
 
-        <el-button @click="dialogVisibleadd=false">取消</el-button>
+        <el-button @click="quxiao()">取消</el-button>
         <el-button :plain="true" @click="submitProduct()">添加</el-button>
       </el-form>
     </el-dialog>
@@ -301,7 +293,8 @@ export default {
       batchList: [],
       seckills:{ title:'' , status:'',  starTime:'',endTime:''},
      seckill:{ seckillId:'', title:'' , status:'',  starTime:'',  endTime:'', putOrNot:'', seckillStarTime:'',  seckillEndTime:''},
-      pageSize: 2,
+      seckill2:{ seckillId:'', title:'' , status:'',  starTime:'',  endTime:'', putOrNot:'', seckillStarTime:'',  seckillEndTime:''},
+     pageSize: 2,
       currentPage: 1,
       totalSize: 0,
       dialogVisible2:false,
@@ -333,6 +326,10 @@ export default {
       addSeckillProduct
     },
   methods: {
+StrToGMT(time){
+    let GMT = new Date(time)
+    return GMT
+},
     selectSeckill: function() {
       var qwe = this
       this.$axios.get('http://localhost:8081/re/returnthings/selectSeckill', {
@@ -346,12 +343,18 @@ export default {
         }
       })
         .then(function(res) {
+          console.log(res)
           const result = res.data
           qwe.seckillList = result.data
           qwe.totalSize = result.dataSize;
         }).catch(function(err) {
           console.log(err)
         })
+    },
+    //取消
+    quxiao:function(){
+      this.dialogVisibleadd=false,
+      this.batchList=''
     },
     //主页面分页
     sizeChange(size) {
@@ -447,11 +450,11 @@ export default {
       const asd = this
       this.$axios.get('http://localhost:8081/re/returnthings/addSeckill', {
         params: {
-          title: this.seckill.title,
-          starTime:this.seckill.starTime,
-          endTime:this.seckill.endTime,
-          seckillStarTime:this.seckill.seckillStarTime,
-          seckillEndTime:this.seckill.seckillEndTime
+          title: this.seckill2.title,
+          starTime:this.seckill2.starTime,
+          endTime:this.seckill2.endTime,
+          seckillStarTime:this.seckill2.seckillStarTime,
+          seckillEndTime:this.seckill2.seckillEndTime
         }
       }).then(function(res = 1) {
         asd.selectSeckill()
@@ -505,6 +508,7 @@ export default {
       this.seckill.putOrNot=data.putOrNot
     },
     submitEdit: function(e) {
+    
       const asd = this
       this.$axios.get('http://localhost:8081/re/returnthings/updateSeckill', {
         params: {
@@ -513,7 +517,7 @@ export default {
            starTime : this.seckill.starTime,
            endTime : this.seckill.endTime,
            seckillStarTime : this.seckill.seckillStarTime,
-           seckillEndTime: this.seckill.seckillEndTime,
+           seckillEndTime:this.seckill.seckillEndTime,
            status:this.seckill.status,
            putOrNot:this.seckill.putOrNot
         }
@@ -544,6 +548,7 @@ export default {
           const result = res.data
           qwe.productList = result.data
           qwe.totalSize1 = result.dataSize;
+          qwe.selectSeckill();
         }).catch(function(err) {
           console.log(err)
         })
@@ -559,16 +564,17 @@ export default {
         type: 'warning'
       }).then(() => {
         const asd = this
-        this.$axios.get('http://localhost:8081/re/returnthings/deleterProduct?pid=' + e.pid)
+        this.$axios.get('http://localhost:8081/re/returnthings/deleterProduct?pid=' + e.pid+'&seckillId='+e.seckillId)
           .then(function(res = 1) {
             asd.productSeckill(e.seckillId)
             if(asd.totalSize==0){
-              dialogProduct=false
+              asd.dialogProduct=false
             }
             asd.$message({
               message: '删除成功',
               type: 'success'
             })
+             asd.selectSeckill();
           }).catch(function(err) {
             asd.$message({
               message: '删除失败',
@@ -693,7 +699,8 @@ this.updateProductList.residueNumber = data.residueNumber
       listener:function(val){
       if(val=="false"){
             this.dialogsubmitProduct=false;
-            this.batchList=''
+            this.dialogVisibleadd=false;
+            this.selectSeckill()
       }
     }
   }

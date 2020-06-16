@@ -6,17 +6,17 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <el-form-item label="输入搜索">
         <el-col :span="30">
-          <el-input v-model="serverNumber" placeholder="服务单号" @change="putChange"/>
+          <el-input v-model="list.serverNumber" placeholder="服务单号" @change="putChange"/>
         </el-col>
       </el-form-item>
       <el-form-item label="收货人">
         <el-col :span="30">
-          <el-input v-model="nameOrPhone" placeholder="收货人姓名/手机号" @change="putChange"/>
+          <el-input v-model="list.nameOrPhone" placeholder="收货人姓名/手机号" @change="putChange"/>
         </el-col>
       </el-form-item>
       <el-form-item label="申请时间">
         <el-col :span="11">
-          <el-date-picker v-model="time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" @change="putChange"/>
+          <el-date-picker v-model="list.time" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" @change="putChange"/>
         </el-col>
       </el-form-item>
       <el-form-item>
@@ -144,9 +144,7 @@ export default {
   data() {
     return {
       returnThingsList: [],
-      serverNumber: '',
-      nameOrPhone: '',
-      time: '',
+      list:{ serverNumber: '',nameOrPhone: '', time: ''},
       pageSize: 2,
       currentPage: 1,
       totalSize: 0,
@@ -179,9 +177,9 @@ export default {
         params: {
           pageSize: this.pageSize,
           currentPage: this.currentPage,
-          serverNumber: this.serverNumber,
-          nameOrPhone: this.nameOrPhone,
-          time: this.time,
+          serverNumber: this.list.serverNumber,
+          nameOrPhone: this.list.nameOrPhone,
+          time: this.list.time,
           applyStatus: this.applyStatus
         }
       })
@@ -206,10 +204,10 @@ export default {
         params: {
           pageSize: this.pageSize,
           currentPage: this.currentPage,
-          serverNumber: this.serverNumber,
-          nameOrPhone: this.nameOrPhone,
+          serverNumber: this.list.serverNumber,
+          nameOrPhone: this.list.nameOrPhone,
           applyStatus: this.applyStatus,
-          time: this.time
+          time: this.list.time
         }
       }).then(function(res) {
         const result = res.data
@@ -232,10 +230,10 @@ export default {
         params: {
           pageSize: this.pageSize,
           currentPage: this.currentPage,
-          serverNumber: this.serverNumber,
-          nameOrPhone: this.nameOrPhone,
+          serverNumber: this.list.serverNumber,
+          nameOrPhone: this.list.nameOrPhone,
           applyStatus: this.applyStatus,
-          time: this.time
+          time: this.list.time
         }
       }).then(function(res) {
         const result = res.data
@@ -258,10 +256,10 @@ export default {
         params: {
           pageSize: this.pageSize,
           currentPage: this.currentPage,
-          serverNumber: this.serverNumber,
-          nameOrPhone: this.nameOrPhone,
+          serverNumber: this.list.serverNumber,
+          nameOrPhone: this.list.nameOrPhone,
           applyStatus: this.applyStatus,
-          time: this.time
+          time: this.list.time
         }
       }).then(function(res) {
         const result = res.data
@@ -367,9 +365,9 @@ export default {
           qwe.returnThingsList = result.data
           qwe.totalSize = result.dataSize
           qwe.currentPage = 1
-          qwe.serverNumber = ''
-          qwe.nameOrPhone = ''
-          qwe.time = ''
+          qwe.list.serverNumber = ''
+          qwe.list.nameOrPhone = ''
+          qwe.list.time = ''
         }).catch(function(err) {
           console.log(err)
         })
