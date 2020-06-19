@@ -69,7 +69,7 @@
               <el-button type="text" size="small" @click="addProduct(scope.row.seckillId)">
                 <span v-show="scope.row.status==1">添加商品</span><span v-show="scope.row.status !=1"> </span>
               </el-button>
-              <el-button type="text" size="small" @click="productSeckill(scope.row.seckillId)">商品列表</el-button>
+              <el-button type="text" size="small" @click="productSeckill(scope.row)">商品列表</el-button>
               <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
               <el-button type="text" size="small" @click="del(scope.row.seckillId)">删除</el-button>
             </template>
@@ -462,6 +462,11 @@ StrToGMT(time){
           message: '添加成功',
           type: 'success'
         })
+          asd.seckill2.title='',
+          asd.seckill2.starTime='',
+          asd.seckill2.endTime='',
+          asd.seckill2.seckillStarTime='',
+          asd.seckill2.seckillEndTime=''
       }).catch(function(err) {
         console.log(err)
       })
@@ -534,14 +539,20 @@ StrToGMT(time){
     },
     //查询当前活动的商品
   productSeckill: function(e) {
-    this.dialogProduct=true
-    this.seckillId=e
+if(e.counts==0){
+   this.$message({
+              message: '当前活动暂无商品！请先添加',
+              type: 'success'
+            })
+  }else{
+  this.dialogProduct=true
+    this.seckillId=e.seckillId
       var qwe = this
       this.$axios.get('http://localhost:8081/re/returnthings/productList', {
         params: {
           pageSize: this.pageSize1,
           currentPage: this.currentPage1,
-          seckillId:e
+          seckillId:e.seckillId
         }
       })
         .then(function(res) {
@@ -552,6 +563,7 @@ StrToGMT(time){
         }).catch(function(err) {
           console.log(err)
         })
+  }
     },
     putChange:function(){
       this.currentPage=1
@@ -701,6 +713,7 @@ this.updateProductList.residueNumber = data.residueNumber
             this.dialogsubmitProduct=false;
             this.dialogVisibleadd=false;
             this.selectSeckill()
+            
       }
     }
   }
