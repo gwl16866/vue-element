@@ -52,6 +52,7 @@
       <el-table-column  label="订单号" width="165">
         <template slot-scope="scope">
           <span v-if="scope.row.controlClass=='2'">N/A</span>
+           <span v-else-if="scope.row.controlClass=='4'">N/A</span>
           <span v-else>{{ scope.row.orderNumber }}</span>
         </template>
       </el-table-column>
@@ -79,7 +80,7 @@
       </el-table-column>
       <el-table-column label="操作信息" width="165">
         <template slot-scope="scope">
-          <span>admin</span><p> {{scope.row.applyTime | dateFormat}}</p>
+          <span>admin</span><p> {{scope.row.quantityTime | dateFormat}}</p>
         </template>
       </el-table-column>
     </el-table>

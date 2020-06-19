@@ -313,6 +313,11 @@ export default {
               message: '已同意',
               type: 'success'
             })
+
+                asd.selectPending();
+    asd.selectAgree();
+     asd.selectRefuse()
+    asd.selectReturnMoney();
           }).catch(function(err) {
             console.log(err)
           })
@@ -340,6 +345,11 @@ export default {
               message: '已拒绝',
               type: 'success'
             })
+
+            asd.selectPending();
+    asd.selectAgree();
+     asd.selectRefuse()
+    asd.selectReturnMoney();
           }).catch(function(err) {
             console.log(err)
           })
@@ -370,6 +380,11 @@ export default {
         qwe.list.serverNumber = ''
         qwe.list.nameOrPhone = ''
         qwe.list.time = ''
+
+        qwe.selectPending();
+    qwe.selectAgree();
+     qwe.selectRefuse()
+    qwe.selectReturnMoney();
       }).catch(function(err) {
         console.log(err)
       })
@@ -441,6 +456,9 @@ export default {
                 message: '批量拒绝成功',
                 type: 'success'
               })
+                  that.selectPending();
+    that.selectAgree();
+     that.selectRefuse()
               that.selectReturnMoney()
             })
             .catch(function(error) {

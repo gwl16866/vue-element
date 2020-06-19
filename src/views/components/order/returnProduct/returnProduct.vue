@@ -167,7 +167,7 @@ export default {
   methods: {
     selectReturnThings: function() {
 
-     
+    
      const t=this;
       t.isAgree = false
       t.isRefuse = false;
@@ -240,6 +240,8 @@ export default {
         qwe.returnThingsList = result.data
         qwe.agreeSize = result.dataSize
         qwe.totalSize = result.dataSize
+
+       
       }).catch(function(err) {
         console.log(err)
       })
@@ -266,6 +268,7 @@ export default {
         qwe.returnThingsList = result.data
         qwe.refuseSize = result.dataSize
         qwe.totalSize = result.dataSize
+
       }).catch(function(err) {
         console.log(err)
       })
@@ -312,6 +315,11 @@ export default {
               message: '已同意',
               type: 'success'
             })
+
+                 asd.selectPending();
+    asd.selectAgree();
+    asd.selectRefuse()
+    asd.selectReturnThings()
           }).catch(function(err) {
             console.log(err)
           })
@@ -338,6 +346,11 @@ export default {
               message: '已拒绝',
               type: 'success'
             })
+  asd.selectPending();
+    asd.selectAgree();
+    asd.selectRefuse()
+    asd.selectReturnThings()
+
           }).catch(function(err) {
             console.log(err)
           })
@@ -368,6 +381,11 @@ export default {
           qwe.list.serverNumber = ''
           qwe.list.nameOrPhone = ''
           qwe.list.time = ''
+
+            qwe.selectPending();
+    qwe.selectAgree();
+    qwe.selectRefuse()
+    qwe.selectReturnThings()
         }).catch(function(err) {
           console.log(err)
         })
@@ -406,7 +424,13 @@ export default {
                 message: '批量同意成功',
                 type: 'success'
               })
+
+               that.selectPending();
+    that.selectAgree();
+    that.selectRefuse();
               that.selectReturnThings()
+
+
             })
             .catch(function(error) {
               that.$message({

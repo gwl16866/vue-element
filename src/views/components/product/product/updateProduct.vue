@@ -133,7 +133,7 @@
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :file-list="fileList"
-        :on-success="uploadScuuess"
+        :on-sccess="uploadScuuess"
         :on-error="uploadError"
         :auto-upload="false">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>

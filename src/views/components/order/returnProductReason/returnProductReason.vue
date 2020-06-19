@@ -170,6 +170,7 @@ export default {
         const asd = this
         this.$axios.get('http://localhost:8081/re/returnmoney/deleteReason?id=' + e.id)
           .then(function(res = 1) {
+            asd.currentPage=1
             asd.selectReturnReason()
             asd.$message({
               message: '删除成功',
